@@ -70,11 +70,11 @@ export function FallingBlossoms() {
           transition={{
             duration: blossom.duration,
             delay: blossom.delay,
-            repeat: Infinity,
+            repeat: 2, // Repeat 2 times (total 3 falls: initial + 2 repeats)
             ease: 'linear',
             x: {
               duration: blossom.duration / 2,
-              repeat: Infinity,
+              repeat: 2,
               ease: 'easeInOut',
             },
           }}
