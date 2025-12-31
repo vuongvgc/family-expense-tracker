@@ -1,177 +1,321 @@
-'use client';
+import {
+  getDashboardSummary,
+  getBudgetWatchlist,
+  getActiveDebtsSummary,
+  getRecentTransactions,
+} from '@/actions/dashboard';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
+import {
+  TrendingUp,
+  TrendingDown,
+  Wallet,
+  CreditCard,
+  DollarSign,
+  AlertCircle,
+  Calendar,
+} from 'lucide-react';
+import { formatCurrency } from '@/lib/utils';
+import { format } from 'date-fns';
+import IncomeExpenseChart from '@/components/dashboard/income-expense-chart';
 
-import { useState, useEffect, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
-import { Loader2 } from 'lucide-react';
-import TransactionList from '@/components/transaction-list';
-import BalanceSummary from '@/components/balance-summary';
-import ExpenseChart from '@/components/expense-chart';
-import GlobalFilterBar from '@/components/global-filter-bar';
-import { TransactionType } from '@prisma/client';
-import { buildFilterQuery } from '@/lib/filters';
+export default async function DashboardPage() {
+  const [summaryResult, watchlistResult, debtsResult, transactionsResult] =
+    await Promise.all([
+      getDashboardSummary(),
+      getBudgetWatchlist(),
+      getActiveDebtsSummary(),
+      getRecentTransactions(),
+    ]);
 
-interface Transaction {
-  id: string;
-  amount: number;
-  description: string;
-  type: TransactionType;
-  categoryId: string | null;
-  date: string;
-  createdBy: {
-    id: string;
-    name: string;
-  };
-  category?: {
-    id: string;
-    name: string;
-    icon: string;
-  };
-}
+  const { summary } = summaryResult;
+  const { watchlist } = watchlistResult;
+  const { debts } = debtsResult;
+  const { transactions } = transactionsResult;
 
-interface CategoryData {
-  category: string;
-  icon: string;
-  categoryId: string | null;
-  amount: number;
-  count: number;
-  percentage: string;
-}
-
-interface AnalyticsData {
-  expenses: {
-    byCategory: CategoryData[];
-    total: number;
-  };
-  income: {
-    byCategory: CategoryData[];
-    total: number;
-  };
-}
-
-export default function DashboardPage() {
-  const searchParams = useSearchParams();
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [currentUserId, setCurrentUserId] = useState<string>('');
-  const [refreshTrigger, setRefreshTrigger] = useState(0);
-
-  const fetchCurrentUser = async () => {
-    try {
-      const response = await fetch('/api/auth/session');
-      const session = await response.json();
-      if (session?.user?.id) {
-        setCurrentUserId(session.user.id);
-      }
-    } catch (error) {
-      console.error('Error fetching user:', error);
-    }
+  const getBudgetColor = (percentage: number) => {
+    if (percentage >= 100) return 'text-red-600';
+    if (percentage >= 80) return 'text-yellow-600';
+    return 'text-green-600';
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setIsLoading(true);
-
-        // Build filter query from current searchParams
-        const filterQuery = buildFilterQuery(searchParams);
-
-        // Fetch transactions and analytics in parallel
-        const [transactionsRes, analyticsRes] = await Promise.all([
-          fetch(`/api/transactions?${filterQuery}`),
-          fetch(`/api/analytics?${filterQuery}`),
-        ]);
-
-        const transactionsData = await transactionsRes.json();
-        const analyticsData = await analyticsRes.json();
-
-        setTransactions(transactionsData.transactions || []);
-        setAnalytics(analyticsData);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchData();
-    fetchCurrentUser();
-  }, [searchParams, refreshTrigger]);
-
-  // Listen for transaction updates from modal
-  useEffect(() => {
-    const handleTransactionUpdate = () => {
-      setRefreshTrigger((prev) => prev + 1);
-    };
-
-    window.addEventListener('transactionUpdated', handleTransactionUpdate);
-    return () => {
-      window.removeEventListener('transactionUpdated', handleTransactionUpdate);
-    };
-  }, []);
-
-  const handleEdit = (transaction: Transaction) => {
-    // Dispatch event to open edit modal
-    window.dispatchEvent(
-      new CustomEvent('editTransaction', { detail: transaction })
-    );
-  };
-
-  const handleDelete = async (id: string) => {
-    try {
-      const response = await fetch(`/api/transactions/${id}`, {
-        method: 'DELETE',
-      });
-
-      if (response.ok) {
-        setRefreshTrigger((prev) => prev + 1);
-      }
-    } catch (error) {
-      console.error('Error deleting transaction:', error);
-    }
+  const getBudgetBgColor = (percentage: number) => {
+    if (percentage >= 100) return 'bg-red-600';
+    if (percentage >= 80) return 'bg-yellow-600';
+    return 'bg-green-600';
   };
 
   return (
-    <>
-      <Suspense fallback={<div className='w-full h-20 bg-white border-b' />}>
-        <GlobalFilterBar />
-      </Suspense>
-      <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
-        <div className='space-y-6'>
-          {/* Header */}
-          <div>
-            <h2 className='text-3xl font-bold text-gray-900'>Dashboard</h2>
-            <p className='text-muted-foreground mt-1'>
-              Track your family's income and expenses
-            </p>
-          </div>
-
-          {/* Balance Summary Cards */}
-          <BalanceSummary transactions={transactions} />
-
-          {/* Expense Chart */}
-          {analytics && (
-            <ExpenseChart
-              data={analytics.expenses.byCategory}
-              total={analytics.expenses.total}
-            />
-          )}
-
-          {/* Transaction List */}
-          {isLoading ? (
-            <div className='flex items-center justify-center py-12'>
-              <Loader2 className='h-8 w-8 animate-spin text-primary' />
-            </div>
-          ) : (
-            <TransactionList
-              transactions={transactions}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-              currentUserId={currentUserId}
-            />
-          )}
-        </div>
+    <div className='p-8'>
+      <div className='mb-8'>
+        <h1 className='text-3xl font-bold mb-2'>Financial Dashboard</h1>
+        <p className='text-muted-foreground'>
+          Overview of your family's financial health
+        </p>
       </div>
-    </>
+
+      {/* Global Summary - Top 4 Cards */}
+      <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-6'>
+        {/* Net Worth */}
+        <Card className='bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20'>
+          <CardHeader className='pb-3'>
+            <CardDescription className='flex items-center gap-2'>
+              <DollarSign className='h-4 w-4' />
+              Net Worth
+            </CardDescription>
+            <CardTitle className='text-3xl font-bold text-primary'>
+              {formatCurrency(summary.netWorth)}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {summary.netWorth >= 0 ? (
+              <p className='text-sm text-green-600 flex items-center gap-1'>
+                <TrendingUp className='h-4 w-4' />
+                Positive balance
+              </p>
+            ) : (
+              <p className='text-sm text-red-600 flex items-center gap-1'>
+                <TrendingDown className='h-4 w-4' />
+                Negative balance
+              </p>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Total Assets */}
+        <Card>
+          <CardHeader className='pb-3'>
+            <CardDescription className='flex items-center gap-2'>
+              <Wallet className='h-4 w-4' />
+              Total Assets
+            </CardDescription>
+            <CardTitle className='text-3xl font-bold text-green-600'>
+              {formatCurrency(summary.totalAssets)}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className='text-sm text-muted-foreground'>
+              Current asset value
+            </p>
+          </CardContent>
+        </Card>
+
+        {/* Total Debt */}
+        <Card>
+          <CardHeader className='pb-3'>
+            <CardDescription className='flex items-center gap-2'>
+              <CreditCard className='h-4 w-4' />
+              Total Debt
+            </CardDescription>
+            <CardTitle className='text-3xl font-bold text-red-600'>
+              {formatCurrency(summary.totalDebts)}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className='text-sm text-muted-foreground'>
+              Outstanding balance
+            </p>
+          </CardContent>
+        </Card>
+
+        {/* Budget Progress */}
+        <Card>
+          <CardHeader className='pb-3'>
+            <CardDescription className='flex items-center gap-2'>
+              <TrendingUp className='h-4 w-4' />
+              Budget Progress
+            </CardDescription>
+            <CardTitle
+              className={`text-3xl font-bold ${getBudgetColor(summary.budgetProgress.percentage)}`}
+            >
+              {summary.budgetProgress.percentage.toFixed(0)}%
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Progress
+              value={Math.min(summary.budgetProgress.percentage, 100)}
+              className='mb-2'
+            />
+            <p className='text-sm text-muted-foreground'>
+              {formatCurrency(summary.budgetProgress.spent)} /{' '}
+              {formatCurrency(summary.budgetProgress.total)}
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Main Content - Two Columns */}
+      <div className='grid gap-6 lg:grid-cols-5 mb-6'>
+        {/* Left Side - Income vs Expenses Chart (60%) */}
+        <Card className='lg:col-span-3'>
+          <CardHeader>
+            <CardTitle>Income vs Expenses</CardTitle>
+            <CardDescription>Last 6 months comparison</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <IncomeExpenseChart data={summary.incomeVsExpenses} />
+          </CardContent>
+        </Card>
+
+        {/* Right Side - Budget Watchlist (40%) */}
+        <Card className='lg:col-span-2'>
+          <CardHeader>
+            <CardTitle className='flex items-center gap-2'>
+              <AlertCircle className='h-5 w-5 text-orange-500' />
+              Budget Watchlist
+            </CardTitle>
+            <CardDescription>Categories exceeding 70% of budget</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {watchlist.length === 0 ? (
+              <div className='text-center py-8'>
+                <p className='text-muted-foreground text-sm'>
+                  All budgets are healthy! 🎉
+                </p>
+              </div>
+            ) : (
+              <div className='space-y-4'>
+                {watchlist.map((item) => (
+                  <div key={item.categoryId} className='space-y-2'>
+                    <div className='flex items-center justify-between'>
+                      <div className='flex items-center gap-2'>
+                        <span className='text-lg'>{item.categoryIcon}</span>
+                        <span className='font-medium text-sm'>
+                          {item.categoryName}
+                        </span>
+                      </div>
+                      <span
+                        className={`text-sm font-bold ${getBudgetColor(item.percentage)}`}
+                      >
+                        {item.percentage.toFixed(0)}%
+                      </span>
+                    </div>
+                    <div className='relative h-2 w-full overflow-hidden rounded-full bg-gray-200'>
+                      <div
+                        className={`h-full transition-all ${getBudgetBgColor(item.percentage)}`}
+                        style={{ width: `${Math.min(item.percentage, 100)}%` }}
+                      />
+                    </div>
+                    <p className='text-xs text-muted-foreground'>
+                      {formatCurrency(item.spent)} / {formatCurrency(item.budget)}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Bottom Row */}
+      <div className='grid gap-6 lg:grid-cols-2'>
+        {/* Active Debts */}
+        <Card>
+          <CardHeader>
+            <CardTitle className='flex items-center gap-2'>
+              <CreditCard className='h-5 w-5' />
+              Active Debts
+            </CardTitle>
+            <CardDescription>Track your debt repayment progress</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {debts.length === 0 ? (
+              <div className='text-center py-8'>
+                <p className='text-muted-foreground text-sm'>
+                  No active debts. Great job! 🎉
+                </p>
+              </div>
+            ) : (
+              <div className='space-y-4'>
+                {debts.map((debt) => (
+                  <div key={debt.id} className='space-y-2'>
+                    <div className='flex items-center justify-between'>
+                      <div>
+                        <p className='font-medium text-sm'>{debt.title}</p>
+                        {debt.dueDate && (
+                          <p className='text-xs text-muted-foreground flex items-center gap-1'>
+                            <Calendar className='h-3 w-3' />
+                            Due: {format(new Date(debt.dueDate), 'MMM dd, yyyy')}
+                          </p>
+                        )}
+                      </div>
+                      <span className='text-sm font-medium text-red-600'>
+                        {formatCurrency(debt.remainingAmount)}
+                      </span>
+                    </div>
+                    <Progress value={debt.progress} className='h-2' />
+                    <p className='text-xs text-muted-foreground'>
+                      {formatCurrency(debt.paidAmount)} paid of{' '}
+                      {formatCurrency(debt.totalAmount)} ({debt.progress.toFixed(0)}%)
+                    </p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Recent Transactions */}
+        <Card>
+          <CardHeader>
+            <CardTitle className='flex items-center gap-2'>
+              <DollarSign className='h-5 w-5' />
+              Recent Transactions
+            </CardTitle>
+            <CardDescription>Your latest 5 transactions</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {transactions.length === 0 ? (
+              <div className='text-center py-8'>
+                <p className='text-muted-foreground text-sm'>
+                  No transactions yet
+                </p>
+              </div>
+            ) : (
+              <div className='space-y-3'>
+                {transactions.map((transaction) => (
+                  <div
+                    key={transaction.id}
+                    className='flex items-center justify-between p-3 border rounded-lg hover:bg-accent transition-colors'
+                  >
+                    <div className='flex items-center gap-3'>
+                      {transaction.category && (
+                        <div className='text-2xl'>{transaction.category.icon}</div>
+                      )}
+                      <div>
+                        <p className='font-medium text-sm'>
+                          {transaction.description}
+                        </p>
+                        <p className='text-xs text-muted-foreground'>
+                          {format(new Date(transaction.date), 'MMM dd, yyyy')} •{' '}
+                          {transaction.category?.name || 'Uncategorized'}
+                        </p>
+                      </div>
+                    </div>
+                    <span
+                      className={`font-semibold text-sm ${
+                        transaction.type === 'INCOME'
+                          ? 'text-green-600'
+                          : 'text-red-600'
+                      }`}
+                    >
+                      {transaction.type === 'INCOME' ? '+' : '-'}
+                      {formatCurrency(transaction.amount)}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+    </div>
   );
 }
+
