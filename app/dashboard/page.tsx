@@ -100,9 +100,7 @@ export default async function DashboardPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className='text-sm text-muted-foreground'>
-              Current asset value
-            </p>
+            <p className='text-sm text-muted-foreground'>Current asset value</p>
           </CardContent>
         </Card>
 
@@ -118,9 +116,7 @@ export default async function DashboardPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className='text-sm text-muted-foreground'>
-              Outstanding balance
-            </p>
+            <p className='text-sm text-muted-foreground'>Outstanding balance</p>
           </CardContent>
         </Card>
 
@@ -132,7 +128,9 @@ export default async function DashboardPage() {
               Budget Progress
             </CardDescription>
             <CardTitle
-              className={`text-3xl font-bold ${getBudgetColor(summary.budgetProgress.percentage)}`}
+              className={`text-3xl font-bold ${getBudgetColor(
+                summary.budgetProgress.percentage
+              )}`}
             >
               {summary.budgetProgress.percentage.toFixed(0)}%
             </CardTitle>
@@ -191,14 +189,18 @@ export default async function DashboardPage() {
                         </span>
                       </div>
                       <span
-                        className={`text-sm font-bold ${getBudgetColor(item.percentage)}`}
+                        className={`text-sm font-bold ${getBudgetColor(
+                          item.percentage
+                        )}`}
                       >
                         {item.percentage.toFixed(0)}%
                       </span>
                     </div>
                     <div className='relative h-2 w-full overflow-hidden rounded-full bg-gray-200'>
                       <div
-                        className={`h-full transition-all ${getBudgetBgColor(item.percentage)}`}
+                        className={`h-full transition-all ${getBudgetBgColor(
+                          item.percentage
+                        )}`}
                         style={{ width: `${Math.min(item.percentage, 100)}%` }}
                       />
                     </div>
@@ -252,7 +254,8 @@ export default async function DashboardPage() {
                     <Progress value={debt.progress} className='h-2' />
                     <p className='text-xs text-muted-foreground'>
                       {formatCurrency(debt.paidAmount)} paid of{' '}
-                      {formatCurrency(debt.totalAmount)} ({debt.progress.toFixed(0)}%)
+                      {formatCurrency(debt.totalAmount)} ({debt.progress.toFixed(0)}
+                      %)
                     </p>
                   </div>
                 ))}
@@ -273,9 +276,7 @@ export default async function DashboardPage() {
           <CardContent>
             {transactions.length === 0 ? (
               <div className='text-center py-8'>
-                <p className='text-muted-foreground text-sm'>
-                  No transactions yet
-                </p>
+                <p className='text-muted-foreground text-sm'>No transactions yet</p>
               </div>
             ) : (
               <div className='space-y-3'>
@@ -318,4 +319,3 @@ export default async function DashboardPage() {
     </div>
   );
 }
-

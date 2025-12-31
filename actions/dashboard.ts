@@ -297,8 +297,7 @@ export async function getActiveDebtsSummary() {
     console.error('Error fetching active debts:', error);
     return {
       success: false,
-      error:
-        error instanceof Error ? error.message : 'Failed to fetch active debts',
+      error: error instanceof Error ? error.message : 'Failed to fetch active debts',
       debts: [],
     };
   }

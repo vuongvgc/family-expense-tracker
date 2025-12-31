@@ -31,6 +31,7 @@ import {
   ChevronDown,
   Users,
   TrendingUp,
+  List,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -48,6 +49,11 @@ const mainNavItems = [
     href: '/dashboard',
     label: 'Dashboard',
     icon: LayoutDashboard,
+  },
+  {
+    href: '/dashboard/transactions',
+    label: 'Transactions',
+    icon: List,
   },
   {
     href: '/dashboard/analytics',
