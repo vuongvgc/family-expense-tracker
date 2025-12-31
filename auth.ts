@@ -35,6 +35,39 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     signIn: '/login',
     error: '/login',
   },
+  callbacks: {
+    authorized({ auth, request: { nextUrl } }) {
+      const isLoggedIn = !!auth?.user;
+      const isOnDashboard = nextUrl.pathname.startsWith('/dashboard');
+      const isOnAuth = nextUrl.pathname.startsWith('/login') || nextUrl.pathname.startsWith('/register');
+      
+      if (isOnDashboard) {
+        if (isLoggedIn) return true;
+        return false; // Redirect to login
+      } else if (isLoggedIn && isOnAuth) {
+        return Response.redirect(new URL('/dashboard', nextUrl));
+      }
+      return true;
+    },
+    async jwt({ token, user }) {
+      // Initial sign in - add custom fields to JWT
+      if (user) {
+        token.id = user.id;
+        token.familyGroupId = user.familyGroupId;
+        token.role = user.role;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      // Add custom fields to session
+      if (token && session.user) {
+        session.user.id = token.id as string;
+        session.user.familyGroupId = token.familyGroupId as string;
+        session.user.role = token.role as UserRole;
+      }
+      return session;
+    },
+  },
   providers: [
     CredentialsProvider({
       name: 'credentials',
@@ -87,24 +120,4 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
     }),
   ],
-  callbacks: {
-    async jwt({ token, user }) {
-      // Initial sign in - add custom fields to JWT
-      if (user) {
-        token.id = user.id;
-        token.familyGroupId = user.familyGroupId;
-        token.role = user.role;
-      }
-      return token;
-    },
-    async session({ session, token }) {
-      // Add custom fields to session
-      if (token && session.user) {
-        session.user.id = token.id as string;
-        session.user.familyGroupId = token.familyGroupId as string;
-        session.user.role = token.role as UserRole;
-      }
-      return session;
-    },
-  },
 });
