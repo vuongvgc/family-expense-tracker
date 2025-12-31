@@ -112,7 +112,8 @@ export default function TransactionTable({
 
   return (
     <>
-      <div className='border rounded-lg overflow-hidden'>
+      {/* Desktop Table View */}
+      <div className='hidden md:block border rounded-lg overflow-hidden'>
         <Table>
           <TableHeader>
             <TableRow>
@@ -181,6 +182,88 @@ export default function TransactionTable({
             ))}
           </TableBody>
         </Table>
+      </div>
+
+      {/* Mobile Card View */}
+      <div className='md:hidden space-y-3'>
+        {transactions.map((transaction) => (
+          <div
+            key={transaction.id}
+            className='border rounded-lg p-4 space-y-3 bg-card'
+          >
+            <div className='flex items-start justify-between gap-2'>
+              <div className='flex items-center gap-2 flex-1 min-w-0'>
+                {transaction.category ? (
+                  <>
+                    <span className='text-2xl flex-shrink-0'>
+                      {transaction.category.icon}
+                    </span>
+                    <div className='min-w-0 flex-1'>
+                      <p className='font-medium text-sm truncate'>
+                        {transaction.category.name}
+                      </p>
+                      <p className='text-xs text-muted-foreground'>
+                        {format(new Date(transaction.date), 'MMM dd, yyyy')}
+                      </p>
+                    </div>
+                  </>
+                ) : (
+                  <div className='min-w-0 flex-1'>
+                    <p className='font-medium text-sm text-muted-foreground'>
+                      Chưa phân loại
+                    </p>
+                    <p className='text-xs text-muted-foreground'>
+                      {format(new Date(transaction.date), 'MMM dd, yyyy')}
+                    </p>
+                  </div>
+                )}
+              </div>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant='ghost'
+                    size='sm'
+                    className='h-8 w-8 p-0 flex-shrink-0'
+                  >
+                    <MoreHorizontal className='h-4 w-4' />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align='end'>
+                  <DropdownMenuItem
+                    onClick={() => handleEdit(transaction)}
+                    className='cursor-pointer'
+                  >
+                    <Edit className='h-4 w-4 mr-2' />
+                    Sửa
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => setDeleteConfirm(transaction)}
+                    className='cursor-pointer text-red-600 focus:text-red-600'
+                  >
+                    <Trash2 className='h-4 w-4 mr-2' />
+                    Xóa
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+            <div className='space-y-1'>
+              <p className='text-sm line-clamp-2'>{transaction.description}</p>
+            </div>
+            <div className='flex items-center justify-between pt-2 border-t'>
+              <span className='text-xs text-muted-foreground'>
+                {transaction.type === 'INCOME' ? 'Thu nhập' : 'Chi tiêu'}
+              </span>
+              <span
+                className={`text-lg font-bold ${
+                  transaction.type === 'INCOME' ? 'text-green-600' : 'text-red-600'
+                }`}
+              >
+                {transaction.type === 'INCOME' ? '+' : '-'}
+                {formatCurrency(transaction.amount)}
+              </span>
+            </div>
+          </div>
+        ))}
       </div>
 
       {/* Delete Confirmation Dialog */}

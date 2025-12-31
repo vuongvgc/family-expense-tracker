@@ -174,24 +174,26 @@ export function BudgetManagement({ initialData }: BudgetManagementProps) {
   const prevYear = month === 1 ? year - 1 : year;
 
   return (
-    <div className='space-y-6'>
+    <div className='space-y-4 sm:space-y-6'>
       {/* Header with Period Picker */}
       <Card>
-        <CardHeader>
-          <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
+        <CardHeader className='pb-3 sm:pb-6'>
+          <div className='flex flex-col gap-4'>
             <div>
-              <CardTitle>Kế Hoạch Ngân Sách Hàng Tháng</CardTitle>
-              <CardDescription>
+              <CardTitle className='text-lg sm:text-xl'>
+                Kế Hoạch Ngân Sách Hàng Tháng
+              </CardTitle>
+              <CardDescription className='text-xs sm:text-sm'>
                 Đặt giới hạn chi tiêu cho từng danh mục và theo dõi tiến độ
               </CardDescription>
             </div>
-            <div className='flex items-center gap-3'>
+            <div className='flex flex-col sm:flex-row items-stretch sm:items-center gap-3'>
               <div className='flex items-center gap-2'>
                 <Select
                   value={month.toString()}
                   onValueChange={(value) => setMonth(parseInt(value))}
                 >
-                  <SelectTrigger className='w-[130px]'>
+                  <SelectTrigger className='w-full sm:w-[130px]'>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -206,7 +208,7 @@ export function BudgetManagement({ initialData }: BudgetManagementProps) {
                   value={year.toString()}
                   onValueChange={(value) => setYear(parseInt(value))}
                 >
-                  <SelectTrigger className='w-[100px]'>
+                  <SelectTrigger className='w-full sm:w-[100px]'>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -223,9 +225,13 @@ export function BudgetManagement({ initialData }: BudgetManagementProps) {
                 size='sm'
                 onClick={() => setShowCloneDialog(true)}
                 disabled={isCloning}
+                className='w-full sm:w-auto'
               >
                 <Copy className='h-4 w-4 mr-2' />
-                Sao Chép từ {MONTHS[prevMonth - 1].label}
+                <span className='hidden sm:inline'>
+                  Sao Chép từ {MONTHS[prevMonth - 1].label}
+                </span>
+                <span className='sm:hidden'>Sao Chép T. Trước</span>
               </Button>
             </div>
           </div>
@@ -233,11 +239,13 @@ export function BudgetManagement({ initialData }: BudgetManagementProps) {
       </Card>
 
       {/* Summary KPI Cards */}
-      <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
+      <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4'>
         <AnimatedCard delay={0}>
-          <CardHeader className='pb-3'>
-            <CardDescription>Tổng Ngân Sách</CardDescription>
-            <CardTitle className='text-2xl text-blue-600'>
+          <CardHeader className='pb-2 sm:pb-3'>
+            <CardDescription className='text-xs sm:text-sm'>
+              Tổng Ngân Sách
+            </CardDescription>
+            <CardTitle className='text-xl sm:text-2xl text-blue-600'>
               <AnimatedNumber value={summary.totalBudget} />
             </CardTitle>
           </CardHeader>
@@ -249,9 +257,11 @@ export function BudgetManagement({ initialData }: BudgetManagementProps) {
         </AnimatedCard>
 
         <AnimatedCard delay={0.1}>
-          <CardHeader className='pb-3'>
-            <CardDescription>Tổng Đã Chi</CardDescription>
-            <CardTitle className='text-2xl text-gray-600'>
+          <CardHeader className='pb-2 sm:pb-3'>
+            <CardDescription className='text-xs sm:text-sm'>
+              Tổng Đã Chi
+            </CardDescription>
+            <CardTitle className='text-xl sm:text-2xl text-gray-600'>
               <AnimatedNumber value={summary.totalSpent} />
             </CardTitle>
           </CardHeader>
@@ -266,18 +276,18 @@ export function BudgetManagement({ initialData }: BudgetManagementProps) {
           </CardContent>
         </AnimatedCard>
 
-        <AnimatedCard delay={0.2}>
-          <CardHeader className='pb-3'>
-            <CardDescription>Còn Lại</CardDescription>
+        <AnimatedCard delay={0.2} className='sm:col-span-2 lg:col-span-1'>
+          <CardHeader className='pb-2 sm:pb-3'>
+            <CardDescription className='text-xs sm:text-sm'>Còn Lại</CardDescription>
             <CardTitle
-              className={`text-2xl flex items-center gap-2 ${
+              className={`text-xl sm:text-2xl flex items-center gap-2 ${
                 summary.remaining < 0 ? 'text-red-600' : 'text-green-600'
               }`}
             >
               {summary.remaining < 0 ? (
-                <TrendingUp className='h-5 w-5' />
+                <TrendingUp className='h-4 w-4 sm:h-5 sm:w-5' />
               ) : (
-                <Wallet className='h-5 w-5' />
+                <Wallet className='h-4 w-4 sm:h-5 sm:w-5' />
               )}
               <AnimatedNumber value={Math.abs(summary.remaining)} />
             </CardTitle>
@@ -296,9 +306,11 @@ export function BudgetManagement({ initialData }: BudgetManagementProps) {
 
       {/* Budget Grid */}
       <AnimatedCard delay={0.3}>
-        <CardHeader>
-          <CardTitle>Ngân Sách Theo Danh Mục</CardTitle>
-          <CardDescription>
+        <CardHeader className='pb-3 sm:pb-6'>
+          <CardTitle className='text-lg sm:text-xl'>
+            Ngân Sách Theo Danh Mục
+          </CardTitle>
+          <CardDescription className='text-xs sm:text-sm'>
             Đặt giới hạn và theo dõi chi tiêu cho từng danh mục
           </CardDescription>
         </CardHeader>
@@ -308,7 +320,7 @@ export function BudgetManagement({ initialData }: BudgetManagementProps) {
               Không tìm thấy danh mục chi tiêu. Hãy tạo danh mục trước.
             </div>
           ) : (
-            <div className='space-y-6'>
+            <div className='space-y-4 sm:space-y-6'>
               {categories.map((category, index) => {
                 const percentage =
                   category.limit > 0 ? (category.spent / category.limit) * 100 : 0;
@@ -324,23 +336,27 @@ export function BudgetManagement({ initialData }: BudgetManagementProps) {
                   <AnimatedCard
                     key={category.categoryId}
                     delay={0.4 + index * 0.05}
-                    className='border rounded-lg p-4 space-y-3'
+                    className='border rounded-lg p-3 sm:p-4 space-y-3'
                   >
                     {/* Category Header */}
-                    <div className='flex items-center justify-between'>
+                    <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3'>
                       <div className='flex items-center gap-3'>
-                        <span className='text-2xl'>{category.categoryIcon}</span>
-                        <div>
-                          <h3 className='font-medium'>{category.categoryName}</h3>
-                          <p className='text-sm text-muted-foreground'>
+                        <span className='text-xl sm:text-2xl'>
+                          {category.categoryIcon}
+                        </span>
+                        <div className='min-w-0 flex-1'>
+                          <h3 className='font-medium text-sm sm:text-base'>
+                            {category.categoryName}
+                          </h3>
+                          <p className='text-xs sm:text-sm text-muted-foreground'>
                             Đã chi: {formatCurrency(category.spent)}
                             {category.limit > 0 &&
                               ` / ${formatCurrency(category.limit)}`}
                           </p>
                         </div>
                       </div>
-                      <div className='flex items-end gap-2'>
-                        <div className='w-[200px]'>
+                      <div className='flex flex-col sm:flex-row items-stretch sm:items-end gap-2'>
+                        <div className='w-full sm:w-[200px]'>
                           <label className='text-xs text-muted-foreground block mb-1'>
                             Giới Hạn Ngân Sách
                           </label>
@@ -367,6 +383,7 @@ export function BudgetManagement({ initialData }: BudgetManagementProps) {
                                 )
                               }
                               disabled={savingCategory === category.categoryId}
+                              className='flex-1 sm:flex-none'
                             >
                               {savingCategory === category.categoryId
                                 ? 'Đang lưu...'
@@ -377,6 +394,7 @@ export function BudgetManagement({ initialData }: BudgetManagementProps) {
                               variant='outline'
                               onClick={handleCancelEdit}
                               disabled={savingCategory === category.categoryId}
+                              className='flex-1 sm:flex-none'
                             >
                               Hủy
                             </Button>

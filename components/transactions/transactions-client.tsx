@@ -190,31 +190,33 @@ export default function TransactionsClient({
   };
 
   return (
-    <div className='p-8'>
+    <div className='p-4 sm:p-6 lg:p-8'>
       {/* Header */}
-      <div className='flex items-center justify-between mb-8'>
+      <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 sm:mb-8'>
         <div>
-          <h1 className='text-3xl font-bold mb-2'>Lịch Sử Giao Dịch</h1>
-          <p className='text-muted-foreground'>
+          <h1 className='text-2xl sm:text-3xl font-bold mb-1 sm:mb-2'>
+            Lịch Sử Giao Dịch
+          </h1>
+          <p className='text-sm sm:text-base text-muted-foreground'>
             Xem và quản lý tất cả giao dịch tài chính của bạn
           </p>
         </div>
-        <Button onClick={handleAddNew} size='lg'>
+        <Button onClick={handleAddNew} size='lg' className='w-full sm:w-auto'>
           <Plus className='h-4 w-4 mr-2' />
           Thêm Mới
         </Button>
       </div>
 
       {/* Filters */}
-      <Card className='mb-6'>
-        <CardHeader>
-          <CardTitle>Bộ Lọc</CardTitle>
-          <CardDescription>
+      <Card className='mb-4 sm:mb-6'>
+        <CardHeader className='pb-3 sm:pb-6'>
+          <CardTitle className='text-lg sm:text-xl'>Bộ Lọc</CardTitle>
+          <CardDescription className='text-xs sm:text-sm'>
             Tìm kiếm và lọc giao dịch theo nhiều tiêu chí
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className='grid gap-4 md:grid-cols-3'>
+          <div className='grid gap-3 sm:gap-4 md:grid-cols-3'>
             {/* Search */}
             <div>
               <Label htmlFor='search'>Tìm Kiếm</Label>
@@ -268,39 +270,39 @@ export default function TransactionsClient({
       </Card>
 
       {/* Summary Bar */}
-      <div className='grid gap-4 md:grid-cols-3 mb-6'>
+      <div className='grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 mb-4 sm:mb-6'>
         <AnimatedCard delay={0.1}>
-          <CardHeader className='pb-3'>
-            <CardDescription className='flex items-center gap-2'>
-              <TrendingUp className='h-4 w-4 text-green-600' />
+          <CardHeader className='pb-2 sm:pb-3'>
+            <CardDescription className='flex items-center gap-2 text-xs sm:text-sm'>
+              <TrendingUp className='h-3 w-3 sm:h-4 sm:w-4 text-green-600' />
               Tổng Thu Nhập
             </CardDescription>
-            <CardTitle className='text-2xl font-bold text-green-600'>
+            <CardTitle className='text-xl sm:text-2xl font-bold text-green-600'>
               <AnimatedNumber value={summary.totalIncome} />
             </CardTitle>
           </CardHeader>
         </AnimatedCard>
 
         <AnimatedCard delay={0.2}>
-          <CardHeader className='pb-3'>
-            <CardDescription className='flex items-center gap-2'>
-              <TrendingDown className='h-4 w-4 text-red-600' />
+          <CardHeader className='pb-2 sm:pb-3'>
+            <CardDescription className='flex items-center gap-2 text-xs sm:text-sm'>
+              <TrendingDown className='h-3 w-3 sm:h-4 sm:w-4 text-red-600' />
               Tổng Chi Tiêu
             </CardDescription>
-            <CardTitle className='text-2xl font-bold text-red-600'>
+            <CardTitle className='text-xl sm:text-2xl font-bold text-red-600'>
               <AnimatedNumber value={summary.totalExpense} />
             </CardTitle>
           </CardHeader>
         </AnimatedCard>
 
-        <AnimatedCard delay={0.3}>
-          <CardHeader className='pb-3'>
-            <CardDescription className='flex items-center gap-2'>
-              <DollarSign className='h-4 w-4' />
+        <AnimatedCard delay={0.3} className='sm:col-span-2 lg:col-span-1'>
+          <CardHeader className='pb-2 sm:pb-3'>
+            <CardDescription className='flex items-center gap-2 text-xs sm:text-sm'>
+              <DollarSign className='h-3 w-3 sm:h-4 sm:w-4' />
               Số Dư Ròng
             </CardDescription>
             <CardTitle
-              className={`text-2xl font-bold ${
+              className={`text-xl sm:text-2xl font-bold ${
                 summary.net >= 0 ? 'text-green-600' : 'text-red-600'
               }`}
             >
@@ -313,11 +315,11 @@ export default function TransactionsClient({
 
       {/* Transactions Table */}
       <AnimatedCard delay={0.4}>
-        <CardHeader>
+        <CardHeader className='pb-3 sm:pb-6'>
           <div className='flex items-center justify-between'>
             <div>
-              <CardTitle>Giao Dịch</CardTitle>
-              <CardDescription>
+              <CardTitle className='text-lg sm:text-xl'>Giao Dịch</CardTitle>
+              <CardDescription className='text-xs sm:text-sm'>
                 Tìm thấy {pagination.totalCount} giao dịch
               </CardDescription>
             </div>
@@ -334,28 +336,30 @@ export default function TransactionsClient({
 
               {/* Pagination */}
               {pagination.totalPages > 1 && (
-                <div className='flex items-center justify-between mt-6'>
-                  <p className='text-sm text-muted-foreground'>
+                <div className='flex flex-col sm:flex-row items-center justify-between gap-3 mt-4 sm:mt-6'>
+                  <p className='text-xs sm:text-sm text-muted-foreground'>
                     Trang {pagination.page} / {pagination.totalPages}
                   </p>
-                  <div className='flex items-center gap-2'>
+                  <div className='flex items-center gap-2 w-full sm:w-auto'>
                     <Button
                       variant='outline'
                       size='sm'
                       onClick={() => handlePageChange(currentPage - 1)}
                       disabled={currentPage === 1}
+                      className='flex-1 sm:flex-none'
                     >
-                      <ChevronLeft className='h-4 w-4 mr-1' />
-                      Trước
+                      <ChevronLeft className='h-4 w-4 sm:mr-1' />
+                      <span className='hidden sm:inline'>Trước</span>
                     </Button>
                     <Button
                       variant='outline'
                       size='sm'
                       onClick={() => handlePageChange(currentPage + 1)}
                       disabled={currentPage === pagination.totalPages}
+                      className='flex-1 sm:flex-none'
                     >
-                      Sau
-                      <ChevronRight className='h-4 w-4 ml-1' />
+                      <span className='hidden sm:inline'>Sau</span>
+                      <ChevronRight className='h-4 w-4 sm:ml-1' />
                     </Button>
                   </div>
                 </div>

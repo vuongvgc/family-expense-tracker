@@ -203,27 +203,34 @@ export function DebtManagement({
   };
 
   return (
-    <div className='space-y-6'>
+    <div className='space-y-4 sm:space-y-6'>
       {/* Header with Create Button */}
-      <div className='flex items-center justify-between'>
+      <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
         <div>
-          <h2 className='text-3xl font-bold text-gray-900'>Quản Lý Khoản Nợ</h2>
-          <p className='text-muted-foreground mt-1'>
+          <h2 className='text-2xl sm:text-3xl font-bold text-gray-900'>
+            Quản Lý Khoản Nợ
+          </h2>
+          <p className='text-sm sm:text-base text-muted-foreground mt-1'>
             Theo dõi số tiền bạn nợ và giám sát tiến độ trả nợ
           </p>
         </div>
-        <Button onClick={() => setShowCreateDialog(true)}>
+        <Button
+          onClick={() => setShowCreateDialog(true)}
+          className='w-full sm:w-auto'
+        >
           <Plus className='h-4 w-4 mr-2' />
           Thêm Khoản Nợ
         </Button>
       </div>
 
       {/* Summary Cards */}
-      <div className='grid grid-cols-1 md:grid-cols-4 gap-4'>
+      <div className='grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4'>
         <AnimatedCard delay={0}>
-          <CardHeader className='pb-3'>
-            <CardDescription>Tổng Nợ Chưa Trả</CardDescription>
-            <CardTitle className='text-2xl text-red-600'>
+          <CardHeader className='pb-2 sm:pb-3'>
+            <CardDescription className='text-xs sm:text-sm'>
+              Tổng Nợ Chưa Trả
+            </CardDescription>
+            <CardTitle className='text-lg sm:text-2xl text-red-600'>
               <AnimatedNumber value={initialSummary.totalOutstanding} />
             </CardTitle>
           </CardHeader>
@@ -233,9 +240,11 @@ export function DebtManagement({
         </AnimatedCard>
 
         <AnimatedCard delay={0.1}>
-          <CardHeader className='pb-3'>
-            <CardDescription>Tổng Số Khoản Nợ</CardDescription>
-            <CardTitle className='text-2xl text-gray-600'>
+          <CardHeader className='pb-2 sm:pb-3'>
+            <CardDescription className='text-xs sm:text-sm'>
+              Tổng Số Khoản Nợ
+            </CardDescription>
+            <CardTitle className='text-lg sm:text-2xl text-gray-600'>
               {initialSummary.totalDebts}
             </CardTitle>
           </CardHeader>
@@ -245,9 +254,11 @@ export function DebtManagement({
         </AnimatedCard>
 
         <AnimatedCard delay={0.2}>
-          <CardHeader className='pb-3'>
-            <CardDescription>Khoản Nợ Hoạt Động</CardDescription>
-            <CardTitle className='text-2xl text-orange-600'>
+          <CardHeader className='pb-2 sm:pb-3'>
+            <CardDescription className='text-xs sm:text-sm'>
+              Khoản Nợ Hoạt Động
+            </CardDescription>
+            <CardTitle className='text-lg sm:text-2xl text-orange-600'>
               {initialSummary.activeDebts}
             </CardTitle>
           </CardHeader>
@@ -257,9 +268,11 @@ export function DebtManagement({
         </AnimatedCard>
 
         <AnimatedCard delay={0.3}>
-          <CardHeader className='pb-3'>
-            <CardDescription>Đã Thanh Toán</CardDescription>
-            <CardTitle className='text-2xl text-green-600'>
+          <CardHeader className='pb-2 sm:pb-3'>
+            <CardDescription className='text-xs sm:text-sm'>
+              Đã Thanh Toán
+            </CardDescription>
+            <CardTitle className='text-lg sm:text-2xl text-green-600'>
               {initialSummary.paidDebts}
             </CardTitle>
           </CardHeader>
@@ -280,7 +293,7 @@ export function DebtManagement({
           </CardContent>
         </AnimatedCard>
       ) : (
-        <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+        <div className='grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6'>
           {initialDebts.map((debt, index) => {
             const paidAmount = debt.totalAmount - debt.remainingAmount;
             const progressPercentage = (paidAmount / debt.totalAmount) * 100;
@@ -292,17 +305,17 @@ export function DebtManagement({
                 delay={0.4 + index * 0.05}
                 className={isPaid ? 'bg-green-50' : ''}
               >
-                <CardHeader>
-                  <div className='flex items-start justify-between'>
-                    <div className='flex-1'>
-                      <CardTitle className='flex items-center gap-2'>
-                        {debt.title}
+                <CardHeader className='pb-3 sm:pb-6'>
+                  <div className='flex items-start justify-between gap-2'>
+                    <div className='flex-1 min-w-0'>
+                      <CardTitle className='flex items-center gap-2 text-base sm:text-lg'>
+                        <span className='truncate'>{debt.title}</span>
                         {isPaid && (
-                          <CheckCircle2 className='h-5 w-5 text-green-600' />
+                          <CheckCircle2 className='h-4 w-4 sm:h-5 sm:w-5 text-green-600 flex-shrink-0' />
                         )}
                       </CardTitle>
                       {debt.description && (
-                        <CardDescription className='mt-1'>
+                        <CardDescription className='mt-1 text-xs sm:text-sm line-clamp-2'>
                           {debt.description}
                         </CardDescription>
                       )}
@@ -315,24 +328,29 @@ export function DebtManagement({
                           setSelectedDebt(debt);
                           setShowDeleteDialog(true);
                         }}
+                        className='flex-shrink-0'
                       >
                         <Trash2 className='h-4 w-4 text-red-600' />
                       </Button>
                     )}
                   </div>
                 </CardHeader>
-                <CardContent className='space-y-4'>
+                <CardContent className='space-y-3 sm:space-y-4'>
                   {/* Amount Info */}
-                  <div className='grid grid-cols-2 gap-4 text-sm'>
+                  <div className='grid grid-cols-2 gap-3 sm:gap-4 text-sm'>
                     <div>
-                      <p className='text-muted-foreground'>Tổng Số Tiền</p>
-                      <p className='font-medium'>
+                      <p className='text-xs sm:text-sm text-muted-foreground'>
+                        Tổng Số Tiền
+                      </p>
+                      <p className='font-medium text-sm sm:text-base'>
                         {formatCurrency(debt.totalAmount)}
                       </p>
                     </div>
                     <div>
-                      <p className='text-muted-foreground'>Còn Lại</p>
-                      <p className='font-medium text-red-600'>
+                      <p className='text-xs sm:text-sm text-muted-foreground'>
+                        Còn Lại
+                      </p>
+                      <p className='font-medium text-sm sm:text-base text-red-600'>
                         {formatCurrency(debt.remainingAmount)}
                       </p>
                     </div>
@@ -344,7 +362,7 @@ export function DebtManagement({
                       <span className='text-muted-foreground'>
                         Đã trả {progressPercentage.toFixed(1)}%
                       </span>
-                      <span className='text-muted-foreground'>
+                      <span className='text-muted-foreground hidden sm:inline'>
                         {formatCurrency(paidAmount)} /{' '}
                         {formatCurrency(debt.totalAmount)}
                       </span>
@@ -380,15 +398,15 @@ export function DebtManagement({
 
                   {/* Payment History */}
                   {debt.payments.length > 0 && (
-                    <div className='border-t pt-4'>
-                      <h4 className='text-sm font-medium mb-2'>
+                    <div className='border-t pt-3 sm:pt-4'>
+                      <h4 className='text-xs sm:text-sm font-medium mb-2'>
                         Thanh Toán Gần Đây
                       </h4>
                       <div className='space-y-2'>
                         {debt.payments.slice(0, 3).map((payment) => (
                           <div
                             key={payment.id}
-                            className='flex items-center justify-between text-sm'
+                            className='flex items-center justify-between text-xs sm:text-sm'
                           >
                             <span className='text-muted-foreground'>
                               {new Date(payment.date).toLocaleDateString()}

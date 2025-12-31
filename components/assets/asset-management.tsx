@@ -289,28 +289,30 @@ export default function AssetManagement({
   });
 
   return (
-    <div className='space-y-6'>
+    <div className='space-y-4 sm:space-y-6'>
       {/* Net Worth Header */}
-      <div className='grid gap-4 md:grid-cols-3'>
+      <div className='grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'>
         <AnimatedCard
           delay={0}
-          className='md:col-span-1 bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20'
+          className='sm:col-span-2 lg:col-span-1 bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20'
         >
-          <CardHeader className='pb-3'>
-            <CardDescription>Tài Sản Ròng</CardDescription>
-            <CardTitle className='text-3xl font-bold text-primary'>
+          <CardHeader className='pb-2 sm:pb-3'>
+            <CardDescription className='text-xs sm:text-sm'>
+              Tài Sản Ròng
+            </CardDescription>
+            <CardTitle className='text-2xl sm:text-3xl font-bold text-primary'>
               <AnimatedNumber value={summary.netWorth} />
             </CardTitle>
           </CardHeader>
-          <CardContent className='text-sm text-muted-foreground'>
+          <CardContent className='text-xs sm:text-sm text-muted-foreground'>
             {summary.netWorth >= 0 ? (
               <p className='flex items-center gap-1 text-green-600'>
-                <TrendingUp className='h-4 w-4' />
+                <TrendingUp className='h-3 w-3 sm:h-4 sm:w-4' />
                 Tài sản ròng dương
               </p>
             ) : (
               <p className='flex items-center gap-1 text-red-600'>
-                <TrendingDown className='h-4 w-4' />
+                <TrendingDown className='h-3 w-3 sm:h-4 sm:w-4' />
                 Tài sản ròng âm
               </p>
             )}
@@ -318,25 +320,29 @@ export default function AssetManagement({
         </AnimatedCard>
 
         <AnimatedCard delay={0.1}>
-          <CardHeader className='pb-3'>
-            <CardDescription>Tổng Tài Sản</CardDescription>
-            <CardTitle className='text-2xl text-green-600'>
+          <CardHeader className='pb-2 sm:pb-3'>
+            <CardDescription className='text-xs sm:text-sm'>
+              Tổng Tài Sản
+            </CardDescription>
+            <CardTitle className='text-xl sm:text-2xl text-green-600'>
               +<AnimatedNumber value={summary.totalAssets} />
             </CardTitle>
           </CardHeader>
-          <CardContent className='text-sm text-muted-foreground'>
+          <CardContent className='text-xs sm:text-sm text-muted-foreground'>
             {summary.assetsCount} tài sản
           </CardContent>
         </AnimatedCard>
 
         <AnimatedCard delay={0.2}>
-          <CardHeader className='pb-3'>
-            <CardDescription>Tổng Khoản Nợ</CardDescription>
-            <CardTitle className='text-2xl text-red-600'>
+          <CardHeader className='pb-2 sm:pb-3'>
+            <CardDescription className='text-xs sm:text-sm'>
+              Tổng Khoản Nợ
+            </CardDescription>
+            <CardTitle className='text-xl sm:text-2xl text-red-600'>
               -<AnimatedNumber value={summary.totalDebts} />
             </CardTitle>
           </CardHeader>
-          <CardContent className='text-sm text-muted-foreground'>
+          <CardContent className='text-xs sm:text-sm text-muted-foreground'>
             {summary.debtsCount} khoản nợ
           </CardContent>
         </AnimatedCard>
@@ -345,12 +351,14 @@ export default function AssetManagement({
       {/* Asset Allocation Chart */}
       {assets.length > 0 && (
         <AnimatedCard delay={0.3}>
-          <CardHeader>
-            <CardTitle>Phân Bổ Tài Sản</CardTitle>
-            <CardDescription>Phân bố tài sản của bạn theo loại</CardDescription>
+          <CardHeader className='pb-3 sm:pb-6'>
+            <CardTitle className='text-lg sm:text-xl'>Phân Bổ Tài Sản</CardTitle>
+            <CardDescription className='text-xs sm:text-sm'>
+              Phân bố tài sản của bạn theo loại
+            </CardDescription>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width='100%' height={300}>
+            <ResponsiveContainer width='100%' height={250}>
               <PieChart>
                 <Pie
                   data={chartData}
@@ -372,7 +380,7 @@ export default function AssetManagement({
                   ))}
                 </Pie>
                 <Tooltip formatter={(value: number) => formatCurrency(value)} />
-                <Legend />
+                <Legend wrapperStyle={{ fontSize: '12px' }} />
               </PieChart>
             </ResponsiveContainer>
           </CardContent>
@@ -381,15 +389,17 @@ export default function AssetManagement({
 
       {/* Assets List */}
       <AnimatedCard delay={0.4}>
-        <CardHeader>
-          <div className='flex items-center justify-between'>
+        <CardHeader className='pb-3 sm:pb-6'>
+          <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
             <div>
-              <CardTitle>Tài Sản Của Bạn</CardTitle>
-              <CardDescription>Quản lý và theo dõi danh mục tài sản</CardDescription>
+              <CardTitle className='text-lg sm:text-xl'>Tài Sản Của Bạn</CardTitle>
+              <CardDescription className='text-xs sm:text-sm'>
+                Quản lý và theo dõi danh mục tài sản
+              </CardDescription>
             </div>
             <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
               <DialogTrigger asChild>
-                <Button>
+                <Button className='w-full sm:w-auto'>
                   <Plus className='h-4 w-4 mr-2' />
                   Thêm Tài Sản
                 </Button>
@@ -470,42 +480,49 @@ export default function AssetManagement({
               </p>
             </div>
           ) : (
-            <div className='space-y-6'>
+            <div className='space-y-4 sm:space-y-6'>
               {Object.entries(assetsByType).map(([type, items]) => {
                 const config = ASSET_TYPE_CONFIG[type as AssetType];
                 const Icon = config.icon;
                 const total = items.reduce((sum, item) => sum + item.amount, 0);
 
                 return (
-                  <div key={type} className='space-y-3'>
+                  <div key={type} className='space-y-2 sm:space-y-3'>
                     <div className='flex items-center gap-2'>
                       <div
-                        className='p-2 rounded-lg'
+                        className='p-1.5 sm:p-2 rounded-lg'
                         style={{ backgroundColor: `${config.color}20` }}
                       >
-                        <Icon className='h-5 w-5' style={{ color: config.color }} />
+                        <Icon
+                          className='h-4 w-4 sm:h-5 sm:w-5'
+                          style={{ color: config.color }}
+                        />
                       </div>
-                      <div className='flex-1'>
-                        <h3 className='font-semibold'>{config.label}</h3>
-                        <p className='text-sm text-muted-foreground'>
+                      <div className='flex-1 min-w-0'>
+                        <h3 className='font-semibold text-sm sm:text-base'>
+                          {config.label}
+                        </h3>
+                        <p className='text-xs sm:text-sm text-muted-foreground'>
                           {items.length} item{items.length !== 1 ? 's' : ''} •{' '}
                           {formatCurrency(total)}
                         </p>
                       </div>
                     </div>
-                    <div className='ml-11 space-y-2'>
+                    <div className='ml-8 sm:ml-11 space-y-2'>
                       {items.map((asset) => (
                         <div
                           key={asset.id}
-                          className='flex items-center justify-between p-3 border rounded-lg hover:bg-accent transition-colors'
+                          className='flex items-center justify-between p-2 sm:p-3 border rounded-lg hover:bg-accent transition-colors'
                         >
-                          <div>
-                            <p className='font-medium'>{asset.name}</p>
-                            <p className='text-sm text-muted-foreground'>
+                          <div className='min-w-0 flex-1'>
+                            <p className='font-medium text-sm sm:text-base truncate'>
+                              {asset.name}
+                            </p>
+                            <p className='text-xs sm:text-sm text-muted-foreground'>
                               {formatCurrency(asset.amount)}
                             </p>
                           </div>
-                          <div className='flex items-center gap-2'>
+                          <div className='flex items-center gap-1 sm:gap-2 flex-shrink-0'>
                             <Button
                               variant='ghost'
                               size='sm'
@@ -513,15 +530,17 @@ export default function AssetManagement({
                                 setEditingAsset(asset);
                                 setEditAmount(asset.amount.toString());
                               }}
+                              className='h-8 w-8 p-0'
                             >
-                              <Edit className='h-4 w-4' />
+                              <Edit className='h-3 w-3 sm:h-4 sm:w-4' />
                             </Button>
                             <Button
                               variant='ghost'
                               size='sm'
                               onClick={() => setDeleteConfirmAsset(asset)}
+                              className='h-8 w-8 p-0'
                             >
-                              <Trash2 className='h-4 w-4 text-red-600' />
+                              <Trash2 className='h-3 w-3 sm:h-4 sm:w-4 text-red-600' />
                             </Button>
                           </div>
                         </div>
