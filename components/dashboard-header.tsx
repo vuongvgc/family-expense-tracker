@@ -10,6 +10,7 @@ import {
   LayoutDashboard,
   FolderKanban,
   BarChart3,
+  Wallet,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -31,6 +32,11 @@ const navItems = [
     href: '/dashboard/analytics',
     label: 'Analytics',
     icon: BarChart3,
+  },
+  {
+    href: '/dashboard/budget',
+    label: 'Budget',
+    icon: Wallet,
   },
   {
     href: '/dashboard/categories',
