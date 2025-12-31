@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { MoneyInput } from '@/components/ui/money-input';
 import { Label } from '@/components/ui/label';
 import { Select } from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
 import {
   Card,
   CardContent,
@@ -13,8 +14,9 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Loader2, X } from 'lucide-react';
+import { Loader2, X, Sparkles } from 'lucide-react';
 import { TransactionType } from '@prisma/client';
+import { getDescriptionDictionary } from '@/actions/transaction';
 
 interface CategoryOption {
   id: string;
@@ -54,6 +56,8 @@ export default function TransactionForm({
   const [error, setError] = useState<string>('');
   const [categories, setCategories] = useState<CategoryOption[]>([]);
   const [loadingCategories, setLoadingCategories] = useState(true);
+  const [suggestionsMap, setSuggestionsMap] = useState<Record<string, string[]>>({});
+  const [loadingSuggestions, setLoadingSuggestions] = useState(true);
 
   const [formData, setFormData] = useState({
     amount: transaction?.amount ? Number(transaction.amount) : 0,
@@ -64,6 +68,23 @@ export default function TransactionForm({
       ? new Date(transaction.date).toISOString().slice(0, 16)
       : new Date().toISOString().slice(0, 16),
   });
+
+  // Fetch suggestions dictionary once when component mounts
+  useEffect(() => {
+    const fetchSuggestions = async () => {
+      setLoadingSuggestions(true);
+      try {
+        const dictionary = await getDescriptionDictionary();
+        setSuggestionsMap(dictionary);
+      } catch (error) {
+        console.error('Failed to fetch suggestions:', error);
+      } finally {
+        setLoadingSuggestions(false);
+      }
+    };
+
+    fetchSuggestions();
+  }, []);
 
   // Fetch categories when component mounts or type changes
   useEffect(() => {
@@ -141,6 +162,15 @@ export default function TransactionForm({
     }
   };
 
+  // Get suggestions for current category
+  const currentSuggestions = formData.categoryId
+    ? suggestionsMap[formData.categoryId] || []
+    : [];
+
+  const handleSuggestionClick = (suggestion: string) => {
+    setFormData({ ...formData, description: suggestion });
+  };
+
   const formContent = (
     <form onSubmit={handleSubmit} className='space-y-4'>
       <div className='grid grid-cols-2 gap-4'>
@@ -206,6 +236,28 @@ export default function TransactionForm({
           maxLength={200}
           disabled={isLoading}
         />
+
+        {/* Smart Suggestions */}
+        {currentSuggestions.length > 0 && (
+          <div className='space-y-2'>
+            <div className='flex items-center gap-1 text-xs text-muted-foreground'>
+              <Sparkles className='h-3 w-3' />
+              <span>Smart Suggestions</span>
+            </div>
+            <div className='flex flex-wrap gap-2'>
+              {currentSuggestions.map((suggestion, index) => (
+                <Badge
+                  key={index}
+                  variant='secondary'
+                  className='cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors'
+                  onClick={() => handleSuggestionClick(suggestion)}
+                >
+                  {suggestion}
+                </Badge>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       <div className='space-y-2'>
