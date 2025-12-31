@@ -2,12 +2,13 @@ import { NextResponse } from 'next/server';
 import { auth } from '@/auth';
 import prisma from '@/lib/prisma';
 import { z } from 'zod';
-import { TransactionType } from '@prisma/client';
+import { TransactionType, PaymentMethod } from '@prisma/client';
 
 const transactionSchema = z.object({
   amount: z.number().positive('Amount must be positive'),
   description: z.string().min(1, 'Description is required').max(200),
   type: z.nativeEnum(TransactionType),
+  paymentMethod: z.nativeEnum(PaymentMethod).default(PaymentMethod.CASH),
   categoryId: z.string().optional().nullable(),
   date: z.string().datetime().optional(),
 });
@@ -98,6 +99,7 @@ export async function PUT(
         amount: validatedData.amount,
         description: validatedData.description,
         type: validatedData.type,
+        paymentMethod: validatedData.paymentMethod,
         categoryId: validatedData.categoryId,
         date: validatedData.date ? new Date(validatedData.date) : undefined,
       },

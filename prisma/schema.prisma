@@ -23,6 +23,15 @@ enum TransactionType {
     EXPENSE
 }
 
+// Enum for payment methods
+enum PaymentMethod {
+    CASH
+    BANK_TRANSFER
+    CREDIT_CARD
+    E_WALLET
+    OTHER
+}
+
 // Enum for debt status
 enum DebtStatus {
     ACTIVE
@@ -101,13 +110,14 @@ model Category {
 
 // Transaction Model
 model Transaction {
-    id          String          @id @default(cuid())
-    amount      Decimal         @db.Decimal(15, 0)
-    description String
-    type        TransactionType
-    date        DateTime        @default(now())
-    createdAt   DateTime        @default(now())
-    updatedAt   DateTime        @updatedAt
+    id            String          @id @default(cuid())
+    amount        Decimal         @db.Decimal(15, 0)
+    description   String
+    type          TransactionType
+    paymentMethod PaymentMethod   @default(CASH)
+    date          DateTime        @default(now())
+    createdAt     DateTime        @default(now())
+    updatedAt     DateTime        @updatedAt
 
     categoryId String?
     category   Category? @relation("CategoryTransactions", fields: [categoryId], references: [id], onDelete: SetNull)

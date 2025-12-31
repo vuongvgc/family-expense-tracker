@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { auth } from '@/auth';
 import prisma from '@/lib/prisma';
 import { z } from 'zod';
-import { TransactionType } from '@prisma/client';
+import { TransactionType, PaymentMethod, DebtStatus } from '@prisma/client';
 import { TransactionFilterWhereClause } from '@/lib/types';
 
 // Validation schema for creating/updating transactions
@@ -10,6 +10,7 @@ const transactionSchema = z.object({
   amount: z.number().positive('Amount must be positive'),
   description: z.string().min(1, 'Description is required').max(200),
   type: z.nativeEnum(TransactionType),
+  paymentMethod: z.nativeEnum(PaymentMethod).default(PaymentMethod.CASH),
   categoryId: z.string().optional().nullable(),
   date: z.string().datetime().optional(),
 });
@@ -121,32 +122,76 @@ export async function POST(request: Request) {
     const body = await request.json();
     const validatedData = transactionSchema.parse(body);
 
-    // Create transaction with family and user context
-    const transaction = await prisma.transaction.create({
-      data: {
-        amount: validatedData.amount,
-        description: validatedData.description,
-        type: validatedData.type,
-        categoryId: validatedData.categoryId,
-        date: validatedData.date ? new Date(validatedData.date) : new Date(),
-        familyGroupId: session.user.familyGroupId,
-        createdById: session.user.id,
-      },
-      include: {
-        createdBy: {
-          select: {
-            id: true,
-            name: true,
+    // Use transaction to ensure atomicity for credit card debt logic
+    const transaction = await prisma.$transaction(async (tx) => {
+      // Create the transaction
+      const newTransaction = await tx.transaction.create({
+        data: {
+          amount: validatedData.amount,
+          description: validatedData.description,
+          type: validatedData.type,
+          paymentMethod: validatedData.paymentMethod,
+          categoryId: validatedData.categoryId,
+          date: validatedData.date ? new Date(validatedData.date) : new Date(),
+          familyGroupId: session.user.familyGroupId,
+          createdById: session.user.id,
+        },
+        include: {
+          createdBy: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+          category: {
+            select: {
+              id: true,
+              name: true,
+              icon: true,
+            },
           },
         },
-        category: {
-          select: {
-            id: true,
-            name: true,
-            icon: true,
+      });
+
+      // Credit Card Debt Logic: Only for EXPENSE transactions with CREDIT_CARD payment
+      if (
+        validatedData.type === TransactionType.EXPENSE &&
+        validatedData.paymentMethod === PaymentMethod.CREDIT_CARD
+      ) {
+        // Find or create "Credit Card Debt"
+        let creditCardDebt = await tx.debt.findFirst({
+          where: {
+            familyGroupId: session.user.familyGroupId,
+            title: 'Credit Card Debt',
           },
-        },
-      },
+        });
+
+        if (!creditCardDebt) {
+          // Auto-provision: Create the debt with 0 initial amount
+          creditCardDebt = await tx.debt.create({
+            data: {
+              title: 'Tổng nợ thẻ tín dụng tự động',
+              description:
+                'Nợ thẻ tín dụng được tạo tự động khi ghi nhận giao dịch thẻ tín dụng.',
+              totalAmount: 0,
+              remainingAmount: 0,
+              status: DebtStatus.ACTIVE,
+              familyGroupId: session.user.familyGroupId,
+            },
+          });
+        }
+
+        // Increment the debt by transaction amount
+        await tx.debt.update({
+          where: { id: creditCardDebt.id },
+          data: {
+            totalAmount: { increment: validatedData.amount },
+            remainingAmount: { increment: validatedData.amount },
+          },
+        });
+      }
+
+      return newTransaction;
     });
 
     return NextResponse.json(transaction, { status: 201 });

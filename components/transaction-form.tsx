@@ -21,7 +21,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Loader2, X, Sparkles } from 'lucide-react';
-import { TransactionType } from '@prisma/client';
+import { TransactionType, PaymentMethod } from '@prisma/client';
 import { getDescriptionDictionary } from '@/actions/transaction';
 
 interface CategoryOption {
@@ -36,6 +36,7 @@ interface Transaction {
   amount: number;
   description: string;
   type: TransactionType;
+  paymentMethod: PaymentMethod;
   categoryId: string | null;
   date: string;
   category?: {
@@ -69,6 +70,7 @@ export default function TransactionForm({
     amount: transaction?.amount ? Number(transaction.amount) : 0,
     description: transaction?.description || '',
     type: (transaction?.type || 'EXPENSE') as TransactionType,
+    paymentMethod: (transaction?.paymentMethod || 'CASH') as PaymentMethod,
     categoryId: transaction?.categoryId || '',
     date: transaction?.date
       ? new Date(transaction.date).toISOString().slice(0, 16)
@@ -121,6 +123,7 @@ export default function TransactionForm({
         amount: Number(transaction.amount),
         description: transaction.description,
         type: transaction.type,
+        paymentMethod: transaction.paymentMethod || 'CASH',
         categoryId: transaction.categoryId || '',
         date: new Date(transaction.date).toISOString().slice(0, 16),
       });
@@ -137,6 +140,7 @@ export default function TransactionForm({
         amount: formData.amount,
         description: formData.description,
         type: formData.type as TransactionType,
+        paymentMethod: formData.paymentMethod as PaymentMethod,
         categoryId: formData.categoryId || null,
         date: new Date(formData.date).toISOString(),
       };
@@ -211,6 +215,28 @@ export default function TransactionForm({
             disabled={isLoading}
           />
         </div>
+      </div>
+
+      <div className='space-y-2'>
+        <Label htmlFor='paymentMethod'>Phương Thức Thanh Toán</Label>
+        <Select
+          value={formData.paymentMethod}
+          onValueChange={(value) =>
+            setFormData({ ...formData, paymentMethod: value as PaymentMethod })
+          }
+          disabled={isLoading}
+        >
+          <SelectTrigger>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value='CASH'>💵 Tiền Mặt</SelectItem>
+            <SelectItem value='BANK_TRANSFER'>🏦 Chuyển Khoản</SelectItem>
+            <SelectItem value='CREDIT_CARD'>💳 Thẻ Tín Dụng</SelectItem>
+            <SelectItem value='E_WALLET'>📱 Ví Điện Tử</SelectItem>
+            <SelectItem value='OTHER'>💼 Khác</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       <div className='space-y-2'>

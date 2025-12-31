@@ -13,13 +13,14 @@ import {
 import { Plus } from 'lucide-react';
 import TransactionForm from '@/components/transaction-form';
 import { useRouter } from 'next/navigation';
-import { TransactionType } from '@prisma/client';
+import { TransactionType, PaymentMethod } from '@prisma/client';
 
 interface Transaction {
   id: string;
   amount: number;
   description: string;
   type: TransactionType;
+  paymentMethod: PaymentMethod;
   categoryId: string | null;
   date: string;
   category?: {
