@@ -22,6 +22,12 @@ enum TransactionType {
     EXPENSE
 }
 
+// Enum for debt status
+enum DebtStatus {
+    ACTIVE
+    PAID
+}
+
 // FamilyGroup Model
 // Represents a household/family unit that shares expense tracking
 model FamilyGroup {
@@ -35,6 +41,7 @@ model FamilyGroup {
     transactions Transaction[] @relation("FamilyTransactions")
     categories   Category[]    @relation("FamilyCategories")
     budgets      Budget[]      @relation("FamilyBudgets")
+    debts        Debt[]        @relation("FamilyDebts")
 
     @@index([inviteCode])
 }
@@ -124,4 +131,41 @@ model Budget {
     @@unique([familyGroupId, categoryId, month, year])
     @@index([familyGroupId])
     @@index([categoryId])
+}
+
+// Debt Model
+// Tracks money owed and repayment progress
+model Debt {
+    id              String     @id @default(cuid())
+    title           String
+    description     String?
+    totalAmount     Decimal    @db.Decimal(15, 0)
+    remainingAmount Decimal    @db.Decimal(15, 0)
+    dueDate         DateTime?
+    status          DebtStatus @default(ACTIVE)
+    createdAt       DateTime   @default(now())
+    updatedAt       DateTime   @updatedAt
+
+    familyGroupId String
+    familyGroup   FamilyGroup @relation("FamilyDebts", fields: [familyGroupId], references: [id], onDelete: Cascade)
+
+    payments DebtPayment[] @relation("DebtPayments")
+
+    @@index([familyGroupId])
+    @@index([status])
+}
+
+// DebtPayment Model
+// Tracks individual repayments for a debt
+model DebtPayment {
+    id        String   @id @default(cuid())
+    amount    Decimal  @db.Decimal(15, 0)
+    date      DateTime @default(now())
+    createdAt DateTime @default(now())
+
+    debtId String
+    debt   Debt   @relation("DebtPayments", fields: [debtId], references: [id], onDelete: Cascade)
+
+    @@index([debtId])
+    @@index([date])
 }
