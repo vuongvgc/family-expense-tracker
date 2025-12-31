@@ -40,13 +40,15 @@ interface Transaction {
 interface TransactionFormProps {
   transaction?: Transaction | null;
   onSuccess: () => void;
-  onCancel: () => void;
+  onCancel?: () => void;
+  showCard?: boolean; // Option to render without Card wrapper for modal use
 }
 
 export default function TransactionForm({
   transaction,
   onSuccess,
   onCancel,
+  showCard = true,
 }: TransactionFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string>('');
@@ -139,6 +141,122 @@ export default function TransactionForm({
     }
   };
 
+  const formContent = (
+    <form onSubmit={handleSubmit} className='space-y-4'>
+      <div className='grid grid-cols-2 gap-4'>
+        <div className='space-y-2'>
+          <Label htmlFor='type'>Type</Label>
+          <Select
+            id='type'
+            value={formData.type}
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                type: e.target.value as TransactionType,
+              })
+            }
+            disabled={isLoading}
+          >
+            <option value='EXPENSE'>Expense</option>
+            <option value='INCOME'>Income</option>
+          </Select>
+        </div>
+
+        <div className='space-y-2'>
+          <Label htmlFor='amount'>Amount (VND)</Label>
+          <MoneyInput
+            id='amount'
+            value={formData.amount}
+            onValueChange={(value) => setFormData({ ...formData, amount: value })}
+            disabled={isLoading}
+          />
+        </div>
+      </div>
+
+      <div className='space-y-2'>
+        <Label htmlFor='category'>Category</Label>
+        <Select
+          id='category'
+          value={formData.categoryId}
+          onChange={(e) => setFormData({ ...formData, categoryId: e.target.value })}
+          disabled={isLoading || loadingCategories}
+        >
+          {loadingCategories ? (
+            <option value=''>Loading categories...</option>
+          ) : categories.length === 0 ? (
+            <option value=''>No categories available</option>
+          ) : (
+            categories.map((cat) => (
+              <option key={cat.id} value={cat.id}>
+                {cat.icon} {cat.name}
+              </option>
+            ))
+          )}
+        </Select>
+      </div>
+
+      <div className='space-y-2'>
+        <Label htmlFor='description'>Description</Label>
+        <Input
+          id='description'
+          placeholder='e.g., Groceries at supermarket'
+          value={formData.description}
+          onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+          required
+          maxLength={200}
+          disabled={isLoading}
+        />
+      </div>
+
+      <div className='space-y-2'>
+        <Label htmlFor='date'>Date & Time</Label>
+        <Input
+          id='date'
+          type='datetime-local'
+          value={formData.date}
+          onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+          required
+          disabled={isLoading}
+        />
+      </div>
+
+      {error && (
+        <div className='bg-destructive/10 text-destructive text-sm p-3 rounded-md'>
+          {error}
+        </div>
+      )}
+
+      <div className='flex gap-3'>
+        <Button type='submit' disabled={isLoading} className='flex-1'>
+          {isLoading ? (
+            <>
+              <Loader2 className='mr-2 h-4 w-4 animate-spin' />
+              Saving...
+            </>
+          ) : transaction ? (
+            'Update Transaction'
+          ) : (
+            'Add Transaction'
+          )}
+        </Button>
+        {onCancel && (
+          <Button
+            type='button'
+            variant='outline'
+            onClick={onCancel}
+            disabled={isLoading}
+          >
+            Cancel
+          </Button>
+        )}
+      </div>
+    </form>
+  );
+
+  if (!showCard) {
+    return formContent;
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -153,126 +271,14 @@ export default function TransactionForm({
                 : 'Record a new income or expense'}
             </CardDescription>
           </div>
-          <Button variant='ghost' size='icon' onClick={onCancel}>
-            <X className='h-4 w-4' />
-          </Button>
+          {onCancel && (
+            <Button variant='ghost' size='icon' onClick={onCancel}>
+              <X className='h-4 w-4' />
+            </Button>
+          )}
         </div>
       </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className='space-y-4'>
-          <div className='grid grid-cols-2 gap-4'>
-            <div className='space-y-2'>
-              <Label htmlFor='type'>Type</Label>
-              <Select
-                id='type'
-                value={formData.type}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    type: e.target.value as TransactionType,
-                  })
-                }
-                disabled={isLoading}
-              >
-                <option value='EXPENSE'>Expense</option>
-                <option value='INCOME'>Income</option>
-              </Select>
-            </div>
-
-            <div className='space-y-2'>
-              <Label htmlFor='amount'>Amount (VND)</Label>
-              <MoneyInput
-                id='amount'
-                value={formData.amount}
-                onValueChange={(value) =>
-                  setFormData({ ...formData, amount: value })
-                }
-                disabled={isLoading}
-              />
-            </div>
-          </div>
-
-          <div className='space-y-2'>
-            <Label htmlFor='category'>Category</Label>
-            <Select
-              id='category'
-              value={formData.categoryId}
-              onChange={(e) =>
-                setFormData({ ...formData, categoryId: e.target.value })
-              }
-              disabled={isLoading || loadingCategories}
-            >
-              {loadingCategories ? (
-                <option value=''>Loading categories...</option>
-              ) : categories.length === 0 ? (
-                <option value=''>No categories available</option>
-              ) : (
-                categories.map((cat) => (
-                  <option key={cat.id} value={cat.id}>
-                    {cat.icon} {cat.name}
-                  </option>
-                ))
-              )}
-            </Select>
-          </div>
-
-          <div className='space-y-2'>
-            <Label htmlFor='description'>Description</Label>
-            <Input
-              id='description'
-              placeholder='e.g., Groceries at supermarket'
-              value={formData.description}
-              onChange={(e) =>
-                setFormData({ ...formData, description: e.target.value })
-              }
-              required
-              maxLength={200}
-              disabled={isLoading}
-            />
-          </div>
-
-          <div className='space-y-2'>
-            <Label htmlFor='date'>Date & Time</Label>
-            <Input
-              id='date'
-              type='datetime-local'
-              value={formData.date}
-              onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-              required
-              disabled={isLoading}
-            />
-          </div>
-
-          {error && (
-            <div className='bg-destructive/10 text-destructive text-sm p-3 rounded-md'>
-              {error}
-            </div>
-          )}
-
-          <div className='flex gap-3'>
-            <Button type='submit' disabled={isLoading} className='flex-1'>
-              {isLoading ? (
-                <>
-                  <Loader2 className='mr-2 h-4 w-4 animate-spin' />
-                  Saving...
-                </>
-              ) : transaction ? (
-                'Update Transaction'
-              ) : (
-                'Add Transaction'
-              )}
-            </Button>
-            <Button
-              type='button'
-              variant='outline'
-              onClick={onCancel}
-              disabled={isLoading}
-            >
-              Cancel
-            </Button>
-          </div>
-        </form>
-      </CardContent>
+      <CardContent>{formContent}</CardContent>
     </Card>
   );
 }

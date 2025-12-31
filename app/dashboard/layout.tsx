@@ -1,6 +1,7 @@
 import { ReactNode, Suspense } from 'react';
 import DashboardHeader from '@/components/dashboard-header';
 import GlobalFilterBar from '@/components/global-filter-bar';
+import AddTransactionModal from '@/components/add-transaction-modal';
 import { Toaster } from '@/components/ui/toaster';
 import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
@@ -27,6 +28,7 @@ export default async function DashboardLayout({
         <GlobalFilterBar />
       </Suspense>
       <main>{children}</main>
+      <AddTransactionModal />
       <Toaster />
     </div>
   );

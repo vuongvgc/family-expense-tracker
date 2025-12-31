@@ -2,9 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { Plus, Loader2 } from 'lucide-react';
-import TransactionForm from '@/components/transaction-form';
+import { Loader2 } from 'lucide-react';
 import TransactionList from '@/components/transaction-list';
 import BalanceSummary from '@/components/balance-summary';
 import ExpenseChart from '@/components/expense-chart';
@@ -54,10 +52,6 @@ export default function DashboardPage() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [showForm, setShowForm] = useState(false);
-  const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(
-    null
-  );
   const [currentUserId, setCurrentUserId] = useState<string>('');
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
@@ -103,15 +97,23 @@ export default function DashboardPage() {
     fetchCurrentUser();
   }, [searchParams, refreshTrigger]);
 
-  const handleFormSuccess = () => {
-    setShowForm(false);
-    setEditingTransaction(null);
-    setRefreshTrigger((prev) => prev + 1);
-  };
+  // Listen for transaction updates from modal
+  useEffect(() => {
+    const handleTransactionUpdate = () => {
+      setRefreshTrigger((prev) => prev + 1);
+    };
+
+    window.addEventListener('transactionUpdated', handleTransactionUpdate);
+    return () => {
+      window.removeEventListener('transactionUpdated', handleTransactionUpdate);
+    };
+  }, []);
 
   const handleEdit = (transaction: Transaction) => {
-    setEditingTransaction(transaction);
-    setShowForm(true);
+    // Dispatch event to open edit modal
+    window.dispatchEvent(
+      new CustomEvent('editTransaction', { detail: transaction })
+    );
   };
 
   const handleDelete = async (id: string) => {
@@ -128,26 +130,15 @@ export default function DashboardPage() {
     }
   };
 
-  const handleAddNew = () => {
-    setEditingTransaction(null);
-    setShowForm(true);
-  };
-
   return (
     <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
       <div className='space-y-6'>
-        {/* Header with Add Button */}
-        <div className='flex items-center justify-between'>
-          <div>
-            <h2 className='text-3xl font-bold text-gray-900'>Dashboard</h2>
-            <p className='text-muted-foreground mt-1'>
-              Track your family's income and expenses
-            </p>
-          </div>
-          <Button onClick={handleAddNew} disabled={showForm}>
-            <Plus className='h-4 w-4 mr-2' />
-            Add Transaction
-          </Button>
+        {/* Header */}
+        <div>
+          <h2 className='text-3xl font-bold text-gray-900'>Dashboard</h2>
+          <p className='text-muted-foreground mt-1'>
+            Track your family's income and expenses
+          </p>
         </div>
 
         {/* Balance Summary Cards */}
@@ -158,18 +149,6 @@ export default function DashboardPage() {
           <ExpenseChart
             data={analytics.expenses.byCategory}
             total={analytics.expenses.total}
-          />
-        )}
-
-        {/* Transaction Form */}
-        {showForm && (
-          <TransactionForm
-            transaction={editingTransaction}
-            onSuccess={handleFormSuccess}
-            onCancel={() => {
-              setShowForm(false);
-              setEditingTransaction(null);
-            }}
           />
         )}
 
