@@ -5,6 +5,7 @@ import AddTransactionModal from '@/components/add-transaction-modal';
 import { Toaster } from '@/components/ui/toaster';
 import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 
 export default async function DashboardLayout({
   children,
@@ -24,9 +25,6 @@ export default async function DashboardLayout({
         familyGroupId={session.user.familyGroupId}
         role={session.user.role}
       />
-      <Suspense fallback={<div className='w-full h-20 bg-white border-b' />}>
-        <GlobalFilterBar />
-      </Suspense>
       <main>{children}</main>
       <AddTransactionModal />
       <Toaster />

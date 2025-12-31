@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import TransactionList from '@/components/transaction-list';
 import BalanceSummary from '@/components/balance-summary';
 import ExpenseChart from '@/components/expense-chart';
+import GlobalFilterBar from '@/components/global-filter-bar';
 import { TransactionType } from '@prisma/client';
 import { buildFilterQuery } from '@/lib/filters';
 
@@ -131,41 +132,46 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
-      <div className='space-y-6'>
-        {/* Header */}
-        <div>
-          <h2 className='text-3xl font-bold text-gray-900'>Dashboard</h2>
-          <p className='text-muted-foreground mt-1'>
-            Track your family's income and expenses
-          </p>
-        </div>
-
-        {/* Balance Summary Cards */}
-        <BalanceSummary transactions={transactions} />
-
-        {/* Expense Chart */}
-        {analytics && (
-          <ExpenseChart
-            data={analytics.expenses.byCategory}
-            total={analytics.expenses.total}
-          />
-        )}
-
-        {/* Transaction List */}
-        {isLoading ? (
-          <div className='flex items-center justify-center py-12'>
-            <Loader2 className='h-8 w-8 animate-spin text-primary' />
+    <>
+      <Suspense fallback={<div className='w-full h-20 bg-white border-b' />}>
+        <GlobalFilterBar />
+      </Suspense>
+      <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
+        <div className='space-y-6'>
+          {/* Header */}
+          <div>
+            <h2 className='text-3xl font-bold text-gray-900'>Dashboard</h2>
+            <p className='text-muted-foreground mt-1'>
+              Track your family's income and expenses
+            </p>
           </div>
-        ) : (
-          <TransactionList
-            transactions={transactions}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-            currentUserId={currentUserId}
-          />
-        )}
+
+          {/* Balance Summary Cards */}
+          <BalanceSummary transactions={transactions} />
+
+          {/* Expense Chart */}
+          {analytics && (
+            <ExpenseChart
+              data={analytics.expenses.byCategory}
+              total={analytics.expenses.total}
+            />
+          )}
+
+          {/* Transaction List */}
+          {isLoading ? (
+            <div className='flex items-center justify-center py-12'>
+              <Loader2 className='h-8 w-8 animate-spin text-primary' />
+            </div>
+          ) : (
+            <TransactionList
+              transactions={transactions}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+              currentUserId={currentUserId}
+            />
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
