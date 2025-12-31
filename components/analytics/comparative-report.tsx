@@ -141,7 +141,7 @@ export function ComparativeReport({ initialData }: ComparativeReportProps) {
   return (
     <div className='space-y-6'>
       {/* Filters */}
-      <AnimatedCard delay={0}>
+      <Card>
         <CardHeader>
           <CardTitle>Chọn Giai Đoạn</CardTitle>
           <CardDescription>
@@ -241,7 +241,7 @@ export function ComparativeReport({ initialData }: ComparativeReportProps) {
             </div>
           </div>
         </CardContent>
-      </AnimatedCard>
+      </Card>
 
       {/* KPI Cards */}
       <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>

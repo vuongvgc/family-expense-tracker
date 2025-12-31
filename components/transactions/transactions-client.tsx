@@ -206,7 +206,7 @@ export default function TransactionsClient({
       </div>
 
       {/* Filters */}
-      <AnimatedCard delay={0} className='mb-6'>
+      <Card className='mb-6'>
         <CardHeader>
           <CardTitle>Bộ Lọc</CardTitle>
           <CardDescription>
@@ -265,7 +265,7 @@ export default function TransactionsClient({
             </div>
           </div>
         </CardContent>
-      </AnimatedCard>
+      </Card>
 
       {/* Summary Bar */}
       <div className='grid gap-4 md:grid-cols-3 mb-6'>
