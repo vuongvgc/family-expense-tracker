@@ -1,10 +1,10 @@
 import NextAuth, { type DefaultSession } from 'next-auth';
-import { PrismaAdapter } from '@auth/prisma-adapter';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import bcrypt from 'bcryptjs';
 import { z } from 'zod';
 import prisma from '@/lib/prisma';
 import { UserRole } from '@prisma/client';
+import { authConfig } from '@/auth.config';
 
 // Extend the built-in session types
 declare module 'next-auth' {
@@ -28,27 +28,12 @@ const loginSchema = z.object({
 });
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  ...authConfig,
   session: {
     strategy: 'jwt',
   },
-  pages: {
-    signIn: '/login',
-    error: '/login',
-  },
   callbacks: {
-    authorized({ auth, request: { nextUrl } }) {
-      const isLoggedIn = !!auth?.user;
-      const isOnDashboard = nextUrl.pathname.startsWith('/dashboard');
-      const isOnAuth = nextUrl.pathname.startsWith('/login') || nextUrl.pathname.startsWith('/register');
-      
-      if (isOnDashboard) {
-        if (isLoggedIn) return true;
-        return false; // Redirect to login
-      } else if (isLoggedIn && isOnAuth) {
-        return Response.redirect(new URL('/dashboard', nextUrl));
-      }
-      return true;
-    },
+    ...authConfig.callbacks,
     async jwt({ token, user }) {
       // Initial sign in - add custom fields to JWT
       if (user) {
