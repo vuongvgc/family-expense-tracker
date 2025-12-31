@@ -81,37 +81,37 @@ interface AssetManagementProps {
 
 const ASSET_TYPE_CONFIG = {
   CASH: {
-    label: 'Cash',
+    label: 'Tiền Mặt',
     icon: Wallet,
     color: '#10b981', // green
   },
   BANK: {
-    label: 'Bank Account',
+    label: 'Tài Khoản Ngân Hàng',
     icon: Building2,
     color: '#3b82f6', // blue
   },
   INVESTMENT: {
-    label: 'Investment',
+    label: 'Đầu Tư',
     icon: TrendingUp,
     color: '#8b5cf6', // purple
   },
   REAL_ESTATE: {
-    label: 'Real Estate',
+    label: 'Bất Động Sản',
     icon: Home,
     color: '#f59e0b', // amber
   },
   CRYPTO: {
-    label: 'Cryptocurrency',
+    label: 'Tiền Điện Tử',
     icon: Bitcoin,
     color: '#f97316', // orange
   },
   GOLD: {
-    label: 'Gold',
+    label: 'Vàng',
     icon: Coins,
     color: '#eab308', // yellow
   },
   OTHER: {
-    label: 'Other',
+    label: 'Khác',
     icon: Package,
     color: '#6b7280', // gray
   },
@@ -152,8 +152,8 @@ export default function AssetManagement({
   const handleAddAsset = async () => {
     if (!newAsset.name || !newAsset.amount) {
       toast({
-        title: 'Validation Error',
-        description: 'Please fill in all fields',
+        title: 'Lỗi Xác Thực',
+        description: 'Vui lòng điền đầy đủ thông tin',
         variant: 'destructive',
       });
       return;
@@ -162,8 +162,8 @@ export default function AssetManagement({
     const amount = parseFloat(newAsset.amount);
     if (isNaN(amount) || amount < 0) {
       toast({
-        title: 'Validation Error',
-        description: 'Please enter a valid amount',
+        title: 'Lỗi Xác Thực',
+        description: 'Vui lòng nhập số tiền hợp lệ',
         variant: 'destructive',
       });
       return;
@@ -184,13 +184,13 @@ export default function AssetManagement({
       setIsAddDialogOpen(false);
       setNewAsset({ name: '', amount: '', type: 'BANK' });
       toast({
-        title: 'Success',
-        description: 'Asset added successfully',
+        title: 'Thành Công',
+        description: 'Thêm tài sản thành công',
       });
     } else {
       toast({
-        title: 'Error',
-        description: result.error || 'Failed to add asset',
+        title: 'Lỗi',
+        description: result.error || 'Không thể thêm tài sản',
         variant: 'destructive',
       });
     }
@@ -225,13 +225,13 @@ export default function AssetManagement({
       });
       setEditingAsset(null);
       toast({
-        title: 'Success',
-        description: 'Asset value updated successfully',
+        title: 'Thành Công',
+        description: 'Cập nhật giá trị tài sản thành công',
       });
     } else {
       toast({
-        title: 'Error',
-        description: result.error || 'Failed to update asset',
+        title: 'Lỗi',
+        description: result.error || 'Không thể cập nhật tài sản',
         variant: 'destructive',
       });
     }
@@ -255,13 +255,13 @@ export default function AssetManagement({
       });
       setDeleteConfirmAsset(null);
       toast({
-        title: 'Success',
-        description: 'Asset deleted successfully',
+        title: 'Thành Công',
+        description: 'Xóa tài sản thành công',
       });
     } else {
       toast({
-        title: 'Error',
-        description: result.error || 'Failed to delete asset',
+        title: 'Lỗi',
+        description: result.error || 'Không thể xóa tài sản',
         variant: 'destructive',
       });
     }
@@ -292,7 +292,7 @@ export default function AssetManagement({
       <div className='grid gap-4 md:grid-cols-3'>
         <Card className='md:col-span-1 bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20'>
           <CardHeader className='pb-3'>
-            <CardDescription>Net Worth</CardDescription>
+            <CardDescription>Tài Sản Ròng</CardDescription>
             <CardTitle className='text-3xl font-bold text-primary'>
               {formatCurrency(summary.netWorth)}
             </CardTitle>
@@ -301,12 +301,12 @@ export default function AssetManagement({
             {summary.netWorth >= 0 ? (
               <p className='flex items-center gap-1 text-green-600'>
                 <TrendingUp className='h-4 w-4' />
-                Positive net worth
+                Tài sản ròng dương
               </p>
             ) : (
               <p className='flex items-center gap-1 text-red-600'>
                 <TrendingDown className='h-4 w-4' />
-                Negative net worth
+                Tài sản ròng âm
               </p>
             )}
           </CardContent>
@@ -314,25 +314,25 @@ export default function AssetManagement({
 
         <Card>
           <CardHeader className='pb-3'>
-            <CardDescription>Total Assets</CardDescription>
+            <CardDescription>Tổng Tài Sản</CardDescription>
             <CardTitle className='text-2xl text-green-600'>
               +{formatCurrency(summary.totalAssets)}
             </CardTitle>
           </CardHeader>
           <CardContent className='text-sm text-muted-foreground'>
-            {summary.assetsCount} asset{summary.assetsCount !== 1 ? 's' : ''}
+            {summary.assetsCount} tài sản
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className='pb-3'>
-            <CardDescription>Total Debts</CardDescription>
+            <CardDescription>Tổng Khoản Nợ</CardDescription>
             <CardTitle className='text-2xl text-red-600'>
               -{formatCurrency(summary.totalDebts)}
             </CardTitle>
           </CardHeader>
           <CardContent className='text-sm text-muted-foreground'>
-            {summary.debtsCount} debt{summary.debtsCount !== 1 ? 's' : ''}
+            {summary.debtsCount} khoản nợ
           </CardContent>
         </Card>
       </div>
@@ -341,8 +341,8 @@ export default function AssetManagement({
       {assets.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle>Asset Allocation</CardTitle>
-            <CardDescription>Distribution of your assets by type</CardDescription>
+            <CardTitle>Phân Bổ Tài Sản</CardTitle>
+            <CardDescription>Phân bố tài sản của bạn theo loại</CardDescription>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width='100%' height={300}>
@@ -379,23 +379,21 @@ export default function AssetManagement({
         <CardHeader>
           <div className='flex items-center justify-between'>
             <div>
-              <CardTitle>Your Assets</CardTitle>
-              <CardDescription>
-                Manage and track your wealth portfolio
-              </CardDescription>
+              <CardTitle>Tài Sản Của Bạn</CardTitle>
+              <CardDescription>Quản lý và theo dõi danh mục tài sản</CardDescription>
             </div>
             <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
               <DialogTrigger asChild>
                 <Button>
                   <Plus className='h-4 w-4 mr-2' />
-                  Add Asset
+                  Thêm Tài Sản
                 </Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Add New Asset</DialogTitle>
+                  <DialogTitle>Thêm Tài Sản Mới</DialogTitle>
                   <DialogDescription>
-                    Add a new asset to track your wealth
+                    Thêm tài sản mới để theo dõi tài sản của bạn
                   </DialogDescription>
                 </DialogHeader>
                 <div className='space-y-4'>

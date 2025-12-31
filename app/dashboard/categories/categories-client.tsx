@@ -75,14 +75,14 @@ export default function CategoriesPageClient({
 
       if (result?.error) {
         toast({
-          title: 'Error',
+          title: 'Lỗi',
           description: result.error,
           variant: 'destructive',
         });
       } else {
         toast({
-          title: 'Success',
-          description: 'Category created successfully',
+          title: 'Thành Công',
+          description: 'Tạo danh mục thành công',
         });
         setIsCreateDialogOpen(false);
         e.currentTarget.reset();
@@ -101,14 +101,14 @@ export default function CategoriesPageClient({
 
       if (result?.error) {
         toast({
-          title: 'Error',
+          title: 'Lỗi',
           description: result.error,
           variant: 'destructive',
         });
       } else {
         toast({
-          title: 'Success',
-          description: 'Category updated successfully',
+          title: 'Thành Công',
+          description: 'Cập nhật danh mục thành công',
         });
         setIsEditDialogOpen(false);
         setEditingCategory(null);
@@ -124,14 +124,14 @@ export default function CategoriesPageClient({
 
       if (result?.error) {
         toast({
-          title: 'Error',
+          title: 'Lỗi',
           description: result.error,
           variant: 'destructive',
         });
       } else {
         toast({
-          title: 'Success',
-          description: 'Category deleted successfully',
+          title: 'Thành Công',
+          description: 'Xóa danh mục thành công',
         });
       }
 
@@ -150,7 +150,7 @@ export default function CategoriesPageClient({
                 <div className='flex-1 min-w-0'>
                   <h3 className='font-semibold text-lg truncate'>{category.name}</h3>
                   <p className='text-sm text-muted-foreground'>
-                    {category._count.transactions} transaction(s)
+                    {category._count.transactions} giao dịch
                   </p>
                 </div>
               </div>
@@ -183,25 +183,25 @@ export default function CategoriesPageClient({
                   </AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>
-                      <AlertDialogTitle>Delete Category?</AlertDialogTitle>
+                      <AlertDialogTitle>Xóa Danh Mục?</AlertDialogTitle>
                       <AlertDialogDescription>
-                        Are you sure you want to delete "{category.name}"?
+                        Bạn có chắc chắn muốn xóa "{category.name}" không?
                         {category._count.transactions > 0 && (
                           <span className='block mt-2 text-destructive font-medium'>
-                            Warning: This category has {category._count.transactions}{' '}
-                            associated transaction(s) and cannot be deleted.
+                            Cảnh báo: Danh mục này có {category._count.transactions}{' '}
+                            giao dịch liên quan và không thể xóa.
                           </span>
                         )}
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogCancel>Hủy</AlertDialogCancel>
                       <AlertDialogAction
                         onClick={() => handleDeleteCategory(category.id)}
                         className='bg-destructive hover:bg-destructive/90'
                         disabled={category._count.transactions > 0}
                       >
-                        Delete
+                        Xóa
                       </AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>
@@ -214,7 +214,7 @@ export default function CategoriesPageClient({
 
       {categories.length === 0 && (
         <div className='col-span-full text-center py-12 text-muted-foreground'>
-          No categories found. Create your first category!
+          Không tìm thấy danh mục. Hãy tạo danh mục đầu tiên của bạn!
         </div>
       )}
     </div>
@@ -233,12 +233,12 @@ export default function CategoriesPageClient({
       <input type='hidden' name='type' value={type} />
 
       <div className='space-y-2'>
-        <Label htmlFor='name'>Category Name</Label>
+        <Label htmlFor='name'>Tên Danh Mục</Label>
         <Input
           id='name'
           name='name'
           type='text'
-          placeholder='e.g., Groceries'
+          placeholder='Ví dụ: Mua sắm'
           defaultValue={category?.name}
           required
           maxLength={50}
@@ -246,18 +246,18 @@ export default function CategoriesPageClient({
       </div>
 
       <div className='space-y-2'>
-        <Label htmlFor='icon'>Icon (Emoji)</Label>
+        <Label htmlFor='icon'>Biểu Tượng (Emoji)</Label>
         <Input
           id='icon'
           name='icon'
           type='text'
-          placeholder='e.g., 🛒'
+          placeholder='Ví dụ: 🛒'
           defaultValue={category?.icon}
           required
           maxLength={10}
         />
         <p className='text-xs text-muted-foreground'>
-          Enter an emoji character (e.g., 🍔, 💰, 🚗)
+          Nhập ký tự emoji (ví dụ: 🍔, 💰, 🚗)
         </p>
       </div>
 
@@ -266,12 +266,12 @@ export default function CategoriesPageClient({
           {isPending ? (
             <>
               <Loader2 className='mr-2 h-4 w-4 animate-spin' />
-              Saving...
+              Đang lưu...
             </>
           ) : category ? (
-            'Update Category'
+            'Cập Nhật Danh Mục'
           ) : (
-            'Create Category'
+            'Tạo Danh Mục'
           )}
         </Button>
       </DialogFooter>
@@ -282,9 +282,9 @@ export default function CategoriesPageClient({
     <div className='container mx-auto p-6 max-w-7xl'>
       <div className='flex items-center justify-between mb-6'>
         <div>
-          <h1 className='text-3xl font-bold'>Category Management</h1>
+          <h1 className='text-3xl font-bold'>Quản Lý Danh Mục</h1>
           <p className='text-muted-foreground mt-1'>
-            Organize your income and expenses with custom categories
+            Sắp xếp thu nhập và chi tiêu của bạn với danh mục tùy chỉnh
           </p>
         </div>
       </div>
@@ -292,10 +292,10 @@ export default function CategoriesPageClient({
       <Tabs defaultValue='expense' className='space-y-6'>
         <TabsList className='grid w-full max-w-md grid-cols-2'>
           <TabsTrigger value='expense'>
-            Expense Categories ({expenseCategories.length})
+            Danh Mục Chi Tiêu ({expenseCategories.length})
           </TabsTrigger>
           <TabsTrigger value='income'>
-            Income Categories ({incomeCategories.length})
+            Danh Mục Thu Nhập ({incomeCategories.length})
           </TabsTrigger>
         </TabsList>
 
@@ -305,14 +305,14 @@ export default function CategoriesPageClient({
               <DialogTrigger asChild>
                 <Button>
                   <Plus className='mr-2 h-4 w-4' />
-                  Add Expense Category
+                  Thêm Danh Mục Chi Tiêu
                 </Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Create Expense Category</DialogTitle>
+                  <DialogTitle>Tạo Danh Mục Chi Tiêu</DialogTitle>
                   <DialogDescription>
-                    Add a new category for tracking expenses
+                    Thêm danh mục mới để theo dõi chi tiêu
                   </DialogDescription>
                 </DialogHeader>
                 <CategoryForm type='EXPENSE' onSubmit={handleCreateCategory} />
@@ -329,14 +329,14 @@ export default function CategoriesPageClient({
               <DialogTrigger asChild>
                 <Button>
                   <Plus className='mr-2 h-4 w-4' />
-                  Add Income Category
+                  Thêm Danh Mục Thu Nhập
                 </Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Create Income Category</DialogTitle>
+                  <DialogTitle>Tạo Danh Mục Thu Nhập</DialogTitle>
                   <DialogDescription>
-                    Add a new category for tracking income
+                    Thêm danh mục mới để theo dõi thu nhập
                   </DialogDescription>
                 </DialogHeader>
                 <CategoryForm type='INCOME' onSubmit={handleCreateCategory} />
@@ -352,8 +352,10 @@ export default function CategoriesPageClient({
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Edit Category</DialogTitle>
-            <DialogDescription>Update category name or icon</DialogDescription>
+            <DialogTitle>Chỉnh Sửa Danh Mục</DialogTitle>
+            <DialogDescription>
+              Cập nhật tên hoặc biểu tượng danh mục
+            </DialogDescription>
           </DialogHeader>
           {editingCategory && (
             <CategoryForm

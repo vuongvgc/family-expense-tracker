@@ -84,8 +84,8 @@ export function DebtManagement({
   const handleCreateDebt = async () => {
     if (!newDebt.title.trim()) {
       toast({
-        title: 'Error',
-        description: 'Title is required',
+        title: 'Lỗi',
+        description: 'Tiêu đề là bắt buộc',
         variant: 'destructive',
       });
       return;
@@ -93,8 +93,8 @@ export function DebtManagement({
 
     if (newDebt.totalAmount <= 0) {
       toast({
-        title: 'Error',
-        description: 'Amount must be greater than zero',
+        title: 'Lỗi',
+        description: 'Số tiền phải lớn hơn 0',
         variant: 'destructive',
       });
       return;
@@ -111,7 +111,7 @@ export function DebtManagement({
 
     if (result.success) {
       toast({
-        title: 'Success',
+        title: 'Thành Công',
         description: result.message,
       });
       setShowCreateDialog(false);
@@ -119,7 +119,7 @@ export function DebtManagement({
       router.refresh();
     } else {
       toast({
-        title: 'Error',
+        title: 'Lỗi',
         description: result.message,
         variant: 'destructive',
       });
@@ -133,8 +133,8 @@ export function DebtManagement({
 
     if (paymentAmount <= 0) {
       toast({
-        title: 'Error',
-        description: 'Payment amount must be greater than zero',
+        title: 'Lỗi',
+        description: 'Số tiền thanh toán phải lớn hơn 0',
         variant: 'destructive',
       });
       return;
@@ -142,8 +142,8 @@ export function DebtManagement({
 
     if (paymentAmount > selectedDebt.remainingAmount) {
       toast({
-        title: 'Error',
-        description: 'Payment exceeds remaining debt',
+        title: 'Lỗi',
+        description: 'Số tiền thanh toán vượt quá số nợ còn lại',
         variant: 'destructive',
       });
       return;
@@ -155,7 +155,7 @@ export function DebtManagement({
 
     if (result.success) {
       toast({
-        title: 'Success',
+        title: 'Thành Công',
         description: result.message,
       });
       setShowPaymentDialog(false);
@@ -164,7 +164,7 @@ export function DebtManagement({
       router.refresh();
     } else {
       toast({
-        title: 'Error',
+        title: 'Lỗi',
         description: result.message,
         variant: 'destructive',
       });
@@ -182,7 +182,7 @@ export function DebtManagement({
 
     if (result.success) {
       toast({
-        title: 'Success',
+        title: 'Thành Công',
         description: result.message,
       });
       setShowDeleteDialog(false);
@@ -190,7 +190,7 @@ export function DebtManagement({
       router.refresh();
     } else {
       toast({
-        title: 'Error',
+        title: 'Lỗi',
         description: result.message,
         variant: 'destructive',
       });
@@ -204,14 +204,14 @@ export function DebtManagement({
       {/* Header with Create Button */}
       <div className='flex items-center justify-between'>
         <div>
-          <h2 className='text-3xl font-bold text-gray-900'>Debt Management</h2>
+          <h2 className='text-3xl font-bold text-gray-900'>Quản Lý Khoản Nợ</h2>
           <p className='text-muted-foreground mt-1'>
-            Track money you owe and monitor repayment progress
+            Theo dõi số tiền bạn nợ và giám sát tiến độ trả nợ
           </p>
         </div>
         <Button onClick={() => setShowCreateDialog(true)}>
           <Plus className='h-4 w-4 mr-2' />
-          Add Debt
+          Thêm Khoản Nợ
         </Button>
       </div>
 
@@ -219,49 +219,49 @@ export function DebtManagement({
       <div className='grid grid-cols-1 md:grid-cols-4 gap-4'>
         <Card>
           <CardHeader className='pb-3'>
-            <CardDescription>Total Outstanding</CardDescription>
+            <CardDescription>Tổng Nợ Chưa Trả</CardDescription>
             <CardTitle className='text-2xl text-red-600'>
               {formatCurrency(initialSummary.totalOutstanding)}
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className='text-xs text-muted-foreground'>Amount left to pay</p>
+            <p className='text-xs text-muted-foreground'>Số tiền còn phải trả</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className='pb-3'>
-            <CardDescription>Total Debts</CardDescription>
+            <CardDescription>Tổng Số Khoản Nợ</CardDescription>
             <CardTitle className='text-2xl text-gray-600'>
               {initialSummary.totalDebts}
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className='text-xs text-muted-foreground'>All debt records</p>
+            <p className='text-xs text-muted-foreground'>Tất cả bản ghi nợ</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className='pb-3'>
-            <CardDescription>Active Debts</CardDescription>
+            <CardDescription>Khoản Nợ Hoạt Động</CardDescription>
             <CardTitle className='text-2xl text-orange-600'>
               {initialSummary.activeDebts}
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className='text-xs text-muted-foreground'>Currently owing</p>
+            <p className='text-xs text-muted-foreground'>Đang nợ</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className='pb-3'>
-            <CardDescription>Paid Off</CardDescription>
+            <CardDescription>Đã Thanh Toán</CardDescription>
             <CardTitle className='text-2xl text-green-600'>
               {initialSummary.paidDebts}
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className='text-xs text-muted-foreground'>Fully repaid</p>
+            <p className='text-xs text-muted-foreground'>Đã trả hết</p>
           </CardContent>
         </Card>
       </div>
@@ -271,7 +271,9 @@ export function DebtManagement({
         <Card>
           <CardContent className='py-12 text-center text-muted-foreground'>
             <Wallet className='h-12 w-12 mx-auto mb-4 opacity-50' />
-            <p>No debts recorded. Click "Add Debt" to start tracking.</p>
+            <p>
+              Chưa ghi nhận khoản nợ nào. Nhấp "Thêm Khoản Nợ" để bắt đầu theo dõi.
+            </p>
           </CardContent>
         </Card>
       ) : (
@@ -316,13 +318,13 @@ export function DebtManagement({
                   {/* Amount Info */}
                   <div className='grid grid-cols-2 gap-4 text-sm'>
                     <div>
-                      <p className='text-muted-foreground'>Total Amount</p>
+                      <p className='text-muted-foreground'>Tổng Số Tiền</p>
                       <p className='font-medium'>
                         {formatCurrency(debt.totalAmount)}
                       </p>
                     </div>
                     <div>
-                      <p className='text-muted-foreground'>Remaining</p>
+                      <p className='text-muted-foreground'>Còn Lại</p>
                       <p className='font-medium text-red-600'>
                         {formatCurrency(debt.remainingAmount)}
                       </p>
@@ -333,7 +335,7 @@ export function DebtManagement({
                   <div className='space-y-2'>
                     <div className='flex items-center justify-between text-xs'>
                       <span className='text-muted-foreground'>
-                        {progressPercentage.toFixed(1)}% paid
+                        Đã trả {progressPercentage.toFixed(1)}%
                       </span>
                       <span className='text-muted-foreground'>
                         {formatCurrency(paidAmount)} /{' '}
@@ -352,7 +354,7 @@ export function DebtManagement({
                   {debt.dueDate && (
                     <div className='flex items-center gap-2 text-sm text-muted-foreground'>
                       <Calendar className='h-4 w-4' />
-                      <span>Due: {new Date(debt.dueDate).toLocaleDateString()}</span>
+                      <span>Hạn: {new Date(debt.dueDate).toLocaleDateString()}</span>
                     </div>
                   )}
 
@@ -367,14 +369,16 @@ export function DebtManagement({
                       }}
                     >
                       <CreditCard className='h-4 w-4 mr-2' />
-                      Make a Payment
+                      Thực Hiện Thanh Toán
                     </Button>
                   )}
 
                   {/* Payment History */}
                   {debt.payments.length > 0 && (
                     <div className='border-t pt-4'>
-                      <h4 className='text-sm font-medium mb-2'>Recent Payments</h4>
+                      <h4 className='text-sm font-medium mb-2'>
+                        Thanh Toán Gần Đây
+                      </h4>
                       <div className='space-y-2'>
                         {debt.payments.slice(0, 3).map((payment) => (
                           <div
@@ -391,7 +395,7 @@ export function DebtManagement({
                         ))}
                         {debt.payments.length > 3 && (
                           <p className='text-xs text-muted-foreground'>
-                            +{debt.payments.length - 3} more payments
+                            +{debt.payments.length - 3} thanh toán khác
                           </p>
                         )}
                       </div>
@@ -408,26 +412,26 @@ export function DebtManagement({
       <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Add New Debt</DialogTitle>
+            <DialogTitle>Thêm Khoản Nợ Mới</DialogTitle>
             <DialogDescription>
-              Record a new debt to track repayment progress
+              Ghi nhận khoản nợ mới để theo dõi tiến độ trả nợ
             </DialogDescription>
           </DialogHeader>
           <div className='space-y-4'>
             <div className='space-y-2'>
-              <Label htmlFor='title'>Title *</Label>
+              <Label htmlFor='title'>Tiêu Đề *</Label>
               <Input
                 id='title'
-                placeholder='e.g., Bank Loan, Credit Card'
+                placeholder='Ví dụ: Vay Ngân Hàng, Thẻ Tín Dụng'
                 value={newDebt.title}
                 onChange={(e) => setNewDebt({ ...newDebt, title: e.target.value })}
               />
             </div>
             <div className='space-y-2'>
-              <Label htmlFor='description'>Description</Label>
+              <Label htmlFor='description'>Mô Tả</Label>
               <Textarea
                 id='description'
-                placeholder='Optional details about this debt'
+                placeholder='Chi tiết tùy chọn về khoản nợ này'
                 value={newDebt.description}
                 onChange={(e) =>
                   setNewDebt({ ...newDebt, description: e.target.value })
@@ -435,18 +439,18 @@ export function DebtManagement({
               />
             </div>
             <div className='space-y-2'>
-              <Label htmlFor='amount'>Total Amount (VND) *</Label>
+              <Label htmlFor='amount'>Tổng Số Tiền (VND) *</Label>
               <MoneyInput
                 id='amount'
                 value={newDebt.totalAmount}
                 onValueChange={(value) =>
                   setNewDebt({ ...newDebt, totalAmount: value })
                 }
-                placeholder='Enter amount'
+                placeholder='Nhập số tiền'
               />
             </div>
             <div className='space-y-2'>
-              <Label htmlFor='dueDate'>Due Date (Optional)</Label>
+              <Label htmlFor='dueDate'>Hạn Trả (Tùy chọn)</Label>
               <Input
                 id='dueDate'
                 type='date'
@@ -461,10 +465,10 @@ export function DebtManagement({
               onClick={() => setShowCreateDialog(false)}
               disabled={isSubmitting}
             >
-              Cancel
+              Hủy
             </Button>
             <Button onClick={handleCreateDebt} disabled={isSubmitting}>
-              {isSubmitting ? 'Creating...' : 'Create Debt'}
+              {isSubmitting ? 'Đang tạo...' : 'Tạo Khoản Nợ'}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -474,31 +478,32 @@ export function DebtManagement({
       <Dialog open={showPaymentDialog} onOpenChange={setShowPaymentDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Make a Payment</DialogTitle>
+            <DialogTitle>Thực Hiện Thanh Toán</DialogTitle>
             <DialogDescription>
-              Record a payment for: {selectedDebt?.title}
+              Ghi nhận thanh toán cho: {selectedDebt?.title}
             </DialogDescription>
           </DialogHeader>
           <div className='space-y-4'>
             <div className='p-4 bg-gray-50 rounded-lg space-y-2'>
               <div className='flex justify-between text-sm'>
-                <span className='text-muted-foreground'>Remaining Amount</span>
+                <span className='text-muted-foreground'>Số Tiền Còn Lại</span>
                 <span className='font-medium'>
                   {formatCurrency(selectedDebt?.remainingAmount || 0)}
                 </span>
               </div>
             </div>
             <div className='space-y-2'>
-              <Label htmlFor='paymentAmount'>Payment Amount (VND) *</Label>
+              <Label htmlFor='paymentAmount'>Số Tiền Thanh Toán (VND) *</Label>
               <MoneyInput
                 id='paymentAmount'
                 value={paymentAmount}
                 onValueChange={setPaymentAmount}
-                placeholder='Enter payment amount'
+                placeholder='Nhập số tiền thanh toán'
               />
             </div>
             <p className='text-xs text-muted-foreground'>
-              This payment will be recorded as an expense in your transactions.
+              Khoản thanh toán này sẽ được ghi nhận là chi tiêu trong các giao dịch
+              của bạn.
             </p>
           </div>
           <DialogFooter>
@@ -507,10 +512,10 @@ export function DebtManagement({
               onClick={() => setShowPaymentDialog(false)}
               disabled={isSubmitting}
             >
-              Cancel
+              Hủy
             </Button>
             <Button onClick={handleMakePayment} disabled={isSubmitting}>
-              {isSubmitting ? 'Recording...' : 'Record Payment'}
+              {isSubmitting ? 'Đang ghi...' : 'Ghi Nhận Thanh Toán'}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -520,20 +525,20 @@ export function DebtManagement({
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Debt?</AlertDialogTitle>
+            <AlertDialogTitle>Xóa Khoản Nợ?</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete "{selectedDebt?.title}"? This action
-              cannot be undone.
+              Bạn có chắc chắn muốn xóa "{selectedDebt?.title}" không? Thao tác này
+              không thể hoàn tác.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={isSubmitting}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={isSubmitting}>Hủy</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDeleteDebt}
               disabled={isSubmitting}
               className='bg-red-600 hover:bg-red-700'
             >
-              {isSubmitting ? 'Deleting...' : 'Delete'}
+              {isSubmitting ? 'Đang xóa...' : 'Xóa'}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

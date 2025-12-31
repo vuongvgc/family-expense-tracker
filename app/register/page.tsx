@@ -84,10 +84,10 @@ export default function RegisterPage() {
             </div>
           </div>
           <CardTitle className='text-2xl text-center'>
-            Family Expense Tracker
+            Quản Lý Chi Tiêu Gia Đình
           </CardTitle>
           <CardDescription className='text-center'>
-            Create a new family account or join an existing one
+            Tạo gia đình mới hoặc tham gia gia đình hiện có
           </CardDescription>
         </CardHeader>
 
@@ -104,11 +104,11 @@ export default function RegisterPage() {
             <TabsList className='grid w-full grid-cols-2 mb-6'>
               <TabsTrigger value='create'>
                 <Users className='w-4 h-4 mr-2' />
-                Create Family
+                Tạo Gia Đình
               </TabsTrigger>
               <TabsTrigger value='join'>
                 <UserPlus className='w-4 h-4 mr-2' />
-                Join Family
+                Tham Gia Gia Đình
               </TabsTrigger>
             </TabsList>
 
@@ -116,11 +116,11 @@ export default function RegisterPage() {
             <TabsContent value='create'>
               <form onSubmit={handleSubmit} className='space-y-4'>
                 <div className='space-y-2'>
-                  <Label htmlFor='create-name'>Your Name</Label>
+                  <Label htmlFor='create-name'>Tên Của Bạn</Label>
                   <Input
                     id='create-name'
                     name='name'
-                    placeholder='John Doe'
+                    placeholder='Nguyễn Văn A'
                     required
                     disabled={isLoading}
                   />
@@ -132,14 +132,14 @@ export default function RegisterPage() {
                     id='create-email'
                     name='email'
                     type='email'
-                    placeholder='john@example.com'
+                    placeholder='nguyen@example.com'
                     required
                     disabled={isLoading}
                   />
                 </div>
 
                 <div className='space-y-2'>
-                  <Label htmlFor='create-password'>Password</Label>
+                  <Label htmlFor='create-password'>Mật Khẩu</Label>
                   <Input
                     id='create-password'
                     name='password'
@@ -152,16 +152,16 @@ export default function RegisterPage() {
                 </div>
 
                 <div className='space-y-2'>
-                  <Label htmlFor='familyName'>Family Name</Label>
+                  <Label htmlFor='familyName'>Tên Gia Đình</Label>
                   <Input
                     id='familyName'
                     name='familyName'
-                    placeholder='The Doe Family'
+                    placeholder='Gia Đình Nguyễn'
                     required
                     disabled={isLoading}
                   />
                   <p className='text-xs text-muted-foreground'>
-                    This will be visible to all family members
+                    Tên này sẽ hiển thị cho tất cả thành viên gia đình
                   </p>
                 </div>
 
@@ -177,7 +177,7 @@ export default function RegisterPage() {
                     {inviteCode && (
                       <div className='bg-white p-2 rounded border border-green-200'>
                         <p className='font-semibold text-xs mb-1'>
-                          Share this invite code with family members:
+                          Chia sẻ mã mời này với thành viên gia đình:
                         </p>
                         <code className='text-primary font-mono text-sm'>
                           {inviteCode}
@@ -191,10 +191,10 @@ export default function RegisterPage() {
                   {isLoading ? (
                     <>
                       <Loader2 className='mr-2 h-4 w-4 animate-spin' />
-                      Creating...
+                      Đang tạo...
                     </>
                   ) : (
-                    'Create Family & Register'
+                    'Tạo Gia Đình & Đăng Ký'
                   )}
                 </Button>
               </form>
@@ -204,11 +204,11 @@ export default function RegisterPage() {
             <TabsContent value='join'>
               <form onSubmit={handleSubmit} className='space-y-4'>
                 <div className='space-y-2'>
-                  <Label htmlFor='join-name'>Your Name</Label>
+                  <Label htmlFor='join-name'>Tên Của Bạn</Label>
                   <Input
                     id='join-name'
                     name='name'
-                    placeholder='Jane Doe'
+                    placeholder='Trần Thị B'
                     required
                     disabled={isLoading}
                   />
@@ -220,14 +220,14 @@ export default function RegisterPage() {
                     id='join-email'
                     name='email'
                     type='email'
-                    placeholder='jane@example.com'
+                    placeholder='tran@example.com'
                     required
                     disabled={isLoading}
                   />
                 </div>
 
                 <div className='space-y-2'>
-                  <Label htmlFor='join-password'>Password</Label>
+                  <Label htmlFor='join-password'>Mật Khẩu</Label>
                   <Input
                     id='join-password'
                     name='password'
@@ -240,16 +240,16 @@ export default function RegisterPage() {
                 </div>
 
                 <div className='space-y-2'>
-                  <Label htmlFor='inviteCode'>Family Invite Code</Label>
+                  <Label htmlFor='inviteCode'>Mã Mời Gia Đình</Label>
                   <Input
                     id='inviteCode'
                     name='inviteCode'
-                    placeholder='Enter the code from your family admin'
+                    placeholder='Nhập mã mời từ quản trị viên gia đình'
                     required
                     disabled={isLoading}
                   />
                   <p className='text-xs text-muted-foreground'>
-                    Ask your family admin for the invite code
+                    Hỏi quản trị viên gia đình để lấy mã mời
                   </p>
                 </div>
 
@@ -269,10 +269,10 @@ export default function RegisterPage() {
                   {isLoading ? (
                     <>
                       <Loader2 className='mr-2 h-4 w-4 animate-spin' />
-                      Joining...
+                      Đang tham gia...
                     </>
                   ) : (
-                    'Join Family & Register'
+                    'Tham Gia Gia Đình & Đăng Ký'
                   )}
                 </Button>
               </form>
@@ -282,9 +282,9 @@ export default function RegisterPage() {
 
         <CardFooter className='flex justify-center'>
           <p className='text-sm text-muted-foreground'>
-            Already have an account?{' '}
+            Đã có tài khoản?{' '}
             <Link href='/login' className='text-primary hover:underline font-medium'>
-              Sign in
+              Đăng nhập
             </Link>
           </p>
         </CardFooter>

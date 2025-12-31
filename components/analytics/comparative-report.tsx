@@ -51,18 +51,18 @@ interface ComparativeReportProps {
 }
 
 const MONTHS = [
-  { value: 1, label: 'January' },
-  { value: 2, label: 'February' },
-  { value: 3, label: 'March' },
-  { value: 4, label: 'April' },
-  { value: 5, label: 'May' },
-  { value: 6, label: 'June' },
-  { value: 7, label: 'July' },
-  { value: 8, label: 'August' },
-  { value: 9, label: 'September' },
-  { value: 10, label: 'October' },
-  { value: 11, label: 'November' },
-  { value: 12, label: 'December' },
+  { value: 1, label: 'Tháng 1' },
+  { value: 2, label: 'Tháng 2' },
+  { value: 3, label: 'Tháng 3' },
+  { value: 4, label: 'Tháng 4' },
+  { value: 5, label: 'Tháng 5' },
+  { value: 6, label: 'Tháng 6' },
+  { value: 7, label: 'Tháng 7' },
+  { value: 8, label: 'Tháng 8' },
+  { value: 9, label: 'Tháng 9' },
+  { value: 10, label: 'Tháng 10' },
+  { value: 11, label: 'Tháng 11' },
+  { value: 12, label: 'Tháng 12' },
 ];
 
 const YEARS = Array.from({ length: 8 }, (_, i) => {
@@ -141,9 +141,9 @@ export function ComparativeReport({ initialData }: ComparativeReportProps) {
       {/* Filters */}
       <Card>
         <CardHeader>
-          <CardTitle>Period Selection</CardTitle>
+          <CardTitle>Chọn Giai Đoạn</CardTitle>
           <CardDescription>
-            Compare expenses between two different months
+            So sánh chi tiêu giữa hai tháng khác nhau
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -151,11 +151,11 @@ export function ComparativeReport({ initialData }: ComparativeReportProps) {
             {/* Target Period */}
             <div className='space-y-4'>
               <h3 className='text-sm font-medium text-blue-600'>
-                Target Period (Current)
+                Giai Đoạn Đích (Hiện Tại)
               </h3>
               <div className='grid grid-cols-2 gap-3'>
                 <div className='space-y-2'>
-                  <label className='text-xs text-gray-500'>Month</label>
+                  <label className='text-xs text-gray-500'>Tháng</label>
                   <Select
                     value={targetMonth.toString()}
                     onValueChange={(value) => setTargetMonth(parseInt(value))}
@@ -173,7 +173,7 @@ export function ComparativeReport({ initialData }: ComparativeReportProps) {
                   </Select>
                 </div>
                 <div className='space-y-2'>
-                  <label className='text-xs text-gray-500'>Year</label>
+                  <label className='text-xs text-gray-500'>Năm</label>
                   <Select
                     value={targetYear.toString()}
                     onValueChange={(value) => setTargetYear(parseInt(value))}
@@ -196,11 +196,11 @@ export function ComparativeReport({ initialData }: ComparativeReportProps) {
             {/* Reference Period */}
             <div className='space-y-4'>
               <h3 className='text-sm font-medium text-gray-600'>
-                Reference Period (Previous)
+                Giai Đoạn Tham Chiếu (Trước Đó)
               </h3>
               <div className='grid grid-cols-2 gap-3'>
                 <div className='space-y-2'>
-                  <label className='text-xs text-gray-500'>Month</label>
+                  <label className='text-xs text-gray-500'>Tháng</label>
                   <Select
                     value={refMonth.toString()}
                     onValueChange={(value) => setRefMonth(parseInt(value))}
@@ -218,7 +218,7 @@ export function ComparativeReport({ initialData }: ComparativeReportProps) {
                   </Select>
                 </div>
                 <div className='space-y-2'>
-                  <label className='text-xs text-gray-500'>Year</label>
+                  <label className='text-xs text-gray-500'>Năm</label>
                   <Select
                     value={refYear.toString()}
                     onValueChange={(value) => setRefYear(parseInt(value))}
@@ -245,7 +245,7 @@ export function ComparativeReport({ initialData }: ComparativeReportProps) {
       <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
         <Card>
           <CardHeader className='pb-3'>
-            <CardDescription>Total Target</CardDescription>
+            <CardDescription>Tổng Giai Đoạn Đích</CardDescription>
             <CardTitle className='text-2xl text-blue-600'>
               {formatCurrency(summary.targetTotal)}
             </CardTitle>
@@ -259,7 +259,7 @@ export function ComparativeReport({ initialData }: ComparativeReportProps) {
 
         <Card>
           <CardHeader className='pb-3'>
-            <CardDescription>Total Reference</CardDescription>
+            <CardDescription>Tổng Giai Đoạn Tham Chiếu</CardDescription>
             <CardTitle className='text-2xl text-gray-600'>
               {formatCurrency(summary.refTotal)}
             </CardTitle>
@@ -273,7 +273,7 @@ export function ComparativeReport({ initialData }: ComparativeReportProps) {
 
         <Card>
           <CardHeader className='pb-3'>
-            <CardDescription>Net Difference</CardDescription>
+            <CardDescription>Chênh Lệch Ròng</CardDescription>
             <CardTitle
               className={`text-2xl flex items-center gap-2 ${
                 summary.diff > 0 ? 'text-red-600' : 'text-green-600'
@@ -294,7 +294,7 @@ export function ComparativeReport({ initialData }: ComparativeReportProps) {
               }`}
             >
               {summary.diff > 0 ? '+' : ''}
-              {summary.percentChange.toFixed(1)}% vs reference
+              {summary.percentChange.toFixed(1)}% so với tham chiếu
             </p>
           </CardContent>
         </Card>
@@ -303,9 +303,9 @@ export function ComparativeReport({ initialData }: ComparativeReportProps) {
       {/* Chart */}
       <Card>
         <CardHeader>
-          <CardTitle>Category Comparison</CardTitle>
+          <CardTitle>So Sánh Theo Danh Mục</CardTitle>
           <CardDescription>
-            Expense breakdown by category for both periods
+            Phân tích chi tiêu theo danh mục cho cả hai giai đoạn
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -326,20 +326,20 @@ export function ComparativeReport({ initialData }: ComparativeReportProps) {
                 <Bar
                   dataKey='refAmount'
                   fill='#9ca3af'
-                  name='Reference Period'
+                  name='Giai Đoạn Tham Chiếu'
                   radius={[4, 4, 0, 0]}
                 />
                 <Bar
                   dataKey='targetAmount'
                   fill='#2563eb'
-                  name='Target Period'
+                  name='Giai Đoạn Đích'
                   radius={[4, 4, 0, 0]}
                 />
               </BarChart>
             </ResponsiveContainer>
           ) : (
             <div className='h-[400px] flex items-center justify-center text-muted-foreground'>
-              No expense data found for the selected periods
+              Không tìm thấy dữ liệu chi tiêu cho các giai đoạn đã chọn
             </div>
           )}
         </CardContent>
@@ -349,21 +349,19 @@ export function ComparativeReport({ initialData }: ComparativeReportProps) {
       {chartData.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle>Detailed Breakdown</CardTitle>
-            <CardDescription>
-              Category-by-category comparison with differences
-            </CardDescription>
+            <CardTitle>Phân Tích Chi Tiết</CardTitle>
+            <CardDescription>So sánh từng danh mục với chênh lệch</CardDescription>
           </CardHeader>
           <CardContent>
             <div className='overflow-x-auto'>
               <table className='w-full'>
                 <thead>
                   <tr className='border-b'>
-                    <th className='text-left py-3 px-4 font-medium'>Category</th>
-                    <th className='text-right py-3 px-4 font-medium'>Reference</th>
-                    <th className='text-right py-3 px-4 font-medium'>Target</th>
-                    <th className='text-right py-3 px-4 font-medium'>Difference</th>
-                    <th className='text-right py-3 px-4 font-medium'>Change</th>
+                    <th className='text-left py-3 px-4 font-medium'>Danh Mục</th>
+                    <th className='text-right py-3 px-4 font-medium'>Tham Chiếu</th>
+                    <th className='text-right py-3 px-4 font-medium'>Đích</th>
+                    <th className='text-right py-3 px-4 font-medium'>Chênh Lệch</th>
+                    <th className='text-right py-3 px-4 font-medium'>Thay Đổi</th>
                   </tr>
                 </thead>
                 <tbody>

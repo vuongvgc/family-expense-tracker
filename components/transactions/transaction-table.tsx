@@ -73,15 +73,15 @@ export default function TransactionTable({
 
     if (result.success) {
       toast({
-        title: 'Success',
-        description: 'Transaction deleted successfully',
+        title: 'Thành Công',
+        description: 'Xóa giao dịch thành công',
       });
       setDeleteConfirm(null);
       router.refresh();
     } else {
       toast({
-        title: 'Error',
-        description: result.error || 'Failed to delete transaction',
+        title: 'Lỗi',
+        description: result.error || 'Không thể xóa giao dịch',
         variant: 'destructive',
       });
     }
@@ -102,9 +102,9 @@ export default function TransactionTable({
     return (
       <div className='text-center py-12 border rounded-lg bg-muted/20'>
         <Receipt className='h-12 w-12 text-muted-foreground mx-auto mb-4' />
-        <h3 className='text-lg font-semibold mb-2'>No Transactions Found</h3>
+        <h3 className='text-lg font-semibold mb-2'>Không Tìm Thấy Giao Dịch</h3>
         <p className='text-muted-foreground text-sm'>
-          Try adjusting your filters or add your first transaction
+          Thử điều chỉnh bộ lọc hoặc thêm giao dịch đầu tiên của bạn
         </p>
       </div>
     );
@@ -116,10 +116,10 @@ export default function TransactionTable({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className='w-[120px]'>Date</TableHead>
-              <TableHead className='w-[180px]'>Category</TableHead>
-              <TableHead>Description</TableHead>
-              <TableHead className='text-right w-[150px]'>Amount</TableHead>
+              <TableHead className='w-[120px]'>Ngày</TableHead>
+              <TableHead className='w-[180px]'>Danh Mục</TableHead>
+              <TableHead>Mô Tả</TableHead>
+              <TableHead className='text-right w-[150px]'>Số Tiền</TableHead>
               <TableHead className='w-[80px]'></TableHead>
             </TableRow>
           </TableHeader>
@@ -137,7 +137,7 @@ export default function TransactionTable({
                     </div>
                   ) : (
                     <span className='text-sm text-muted-foreground'>
-                      Uncategorized
+                      Chưa phân loại
                     </span>
                   )}
                 </TableCell>
@@ -165,14 +165,14 @@ export default function TransactionTable({
                         className='cursor-pointer'
                       >
                         <Edit className='h-4 w-4 mr-2' />
-                        Edit
+                        Sửa
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         onClick={() => setDeleteConfirm(transaction)}
                         className='cursor-pointer text-red-600 focus:text-red-600'
                       >
                         <Trash2 className='h-4 w-4 mr-2' />
-                        Delete
+                        Xóa
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -190,27 +190,27 @@ export default function TransactionTable({
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Transaction</AlertDialogTitle>
+            <AlertDialogTitle>Xóa Giao Dịch</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete this transaction? This action cannot be
-              undone.
+              Bạn có chắc chắn muốn xóa giao dịch này không? Hành động này không thể
+              hoàn tác.
               <div className='mt-4 p-3 bg-muted rounded-lg'>
                 <p className='font-medium'>{deleteConfirm?.description}</p>
                 <p className='text-sm text-muted-foreground mt-1'>
-                  {deleteConfirm?.category?.name || 'Uncategorized'} •{' '}
+                  {deleteConfirm?.category?.name || 'Chưa phân loại'} •{' '}
                   {deleteConfirm && formatCurrency(deleteConfirm.amount)}
                 </p>
               </div>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>Hủy</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDelete}
               disabled={isDeleting}
               className='bg-red-600 hover:bg-red-700'
             >
-              {isDeleting ? 'Deleting...' : 'Delete'}
+              {isDeleting ? 'Đang xóa...' : 'Xóa'}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

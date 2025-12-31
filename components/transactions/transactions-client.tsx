@@ -35,7 +35,13 @@ import {
   ChevronRight,
 } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
-import { startOfMonth, endOfMonth, startOfYear, endOfYear, subMonths } from 'date-fns';
+import {
+  startOfMonth,
+  endOfMonth,
+  startOfYear,
+  endOfYear,
+  subMonths,
+} from 'date-fns';
 
 interface Transaction {
   id: string;
@@ -85,7 +91,8 @@ export default function TransactionsClient({
 }: TransactionsClientProps) {
   const router = useRouter();
 
-  const [transactions, setTransactions] = useState<Transaction[]>(initialTransactions);
+  const [transactions, setTransactions] =
+    useState<Transaction[]>(initialTransactions);
   const [summary, setSummary] = useState(initialSummary);
   const [pagination, setPagination] = useState(initialPagination);
   const [isLoading, setIsLoading] = useState(false);
@@ -185,35 +192,35 @@ export default function TransactionsClient({
       {/* Header */}
       <div className='flex items-center justify-between mb-8'>
         <div>
-          <h1 className='text-3xl font-bold mb-2'>Transaction History</h1>
+          <h1 className='text-3xl font-bold mb-2'>Lịch Sử Giao Dịch</h1>
           <p className='text-muted-foreground'>
-            View and manage all your financial records
+            Xem và quản lý tất cả giao dịch tài chính của bạn
           </p>
         </div>
         <Button onClick={handleAddNew} size='lg'>
           <Plus className='h-4 w-4 mr-2' />
-          Add New
+          Thêm Mới
         </Button>
       </div>
 
       {/* Filters */}
       <Card className='mb-6'>
         <CardHeader>
-          <CardTitle>Filters</CardTitle>
+          <CardTitle>Bộ Lọc</CardTitle>
           <CardDescription>
-            Search and filter transactions by various criteria
+            Tìm kiếm và lọc giao dịch theo nhiều tiêu chí
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className='grid gap-4 md:grid-cols-3'>
             {/* Search */}
             <div>
-              <Label htmlFor='search'>Search</Label>
+              <Label htmlFor='search'>Tìm Kiếm</Label>
               <div className='relative'>
                 <Search className='absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground' />
                 <Input
                   id='search'
-                  placeholder='Search by description...'
+                  placeholder='Tìm theo mô tả...'
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className='pl-9'
@@ -223,13 +230,13 @@ export default function TransactionsClient({
 
             {/* Category Filter */}
             <div>
-              <Label htmlFor='category'>Category</Label>
+              <Label htmlFor='category'>Danh Mục</Label>
               <Select value={selectedCategory} onValueChange={setSelectedCategory}>
                 <SelectTrigger id='category'>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value='all'>All Categories</SelectItem>
+                  <SelectItem value='all'>Tất Cả Danh Mục</SelectItem>
                   {categories.map((category) => (
                     <SelectItem key={category.id} value={category.id}>
                       {category.icon} {category.name}
@@ -241,16 +248,16 @@ export default function TransactionsClient({
 
             {/* Time Period */}
             <div>
-              <Label htmlFor='period'>Time Period</Label>
+              <Label htmlFor='period'>Khoảng Thời Gian</Label>
               <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
                 <SelectTrigger id='period'>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value='this-month'>This Month</SelectItem>
-                  <SelectItem value='last-month'>Last Month</SelectItem>
-                  <SelectItem value='this-year'>This Year</SelectItem>
-                  <SelectItem value='all'>All Time</SelectItem>
+                  <SelectItem value='this-month'>Tháng Này</SelectItem>
+                  <SelectItem value='last-month'>Tháng Trước</SelectItem>
+                  <SelectItem value='this-year'>Năm Nay</SelectItem>
+                  <SelectItem value='all'>Tất Cả</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -264,7 +271,7 @@ export default function TransactionsClient({
           <CardHeader className='pb-3'>
             <CardDescription className='flex items-center gap-2'>
               <TrendingUp className='h-4 w-4 text-green-600' />
-              Total Income
+              Tổng Thu Nhập
             </CardDescription>
             <CardTitle className='text-2xl font-bold text-green-600'>
               {formatCurrency(summary.totalIncome)}
@@ -276,7 +283,7 @@ export default function TransactionsClient({
           <CardHeader className='pb-3'>
             <CardDescription className='flex items-center gap-2'>
               <TrendingDown className='h-4 w-4 text-red-600' />
-              Total Expense
+              Tổng Chi Tiêu
             </CardDescription>
             <CardTitle className='text-2xl font-bold text-red-600'>
               {formatCurrency(summary.totalExpense)}
@@ -288,7 +295,7 @@ export default function TransactionsClient({
           <CardHeader className='pb-3'>
             <CardDescription className='flex items-center gap-2'>
               <DollarSign className='h-4 w-4' />
-              Net
+              Số Dư Ròng
             </CardDescription>
             <CardTitle
               className={`text-2xl font-bold ${
@@ -307,9 +314,9 @@ export default function TransactionsClient({
         <CardHeader>
           <div className='flex items-center justify-between'>
             <div>
-              <CardTitle>Transactions</CardTitle>
+              <CardTitle>Giao Dịch</CardTitle>
               <CardDescription>
-                {pagination.totalCount} transaction{pagination.totalCount !== 1 ? 's' : ''} found
+                Tìm thấy {pagination.totalCount} giao dịch
               </CardDescription>
             </div>
           </div>
@@ -327,7 +334,7 @@ export default function TransactionsClient({
               {pagination.totalPages > 1 && (
                 <div className='flex items-center justify-between mt-6'>
                   <p className='text-sm text-muted-foreground'>
-                    Page {pagination.page} of {pagination.totalPages}
+                    Trang {pagination.page} / {pagination.totalPages}
                   </p>
                   <div className='flex items-center gap-2'>
                     <Button
@@ -337,7 +344,7 @@ export default function TransactionsClient({
                       disabled={currentPage === 1}
                     >
                       <ChevronLeft className='h-4 w-4 mr-1' />
-                      Previous
+                      Trước
                     </Button>
                     <Button
                       variant='outline'
@@ -345,7 +352,7 @@ export default function TransactionsClient({
                       onClick={() => handlePageChange(currentPage + 1)}
                       disabled={currentPage === pagination.totalPages}
                     >
-                      Next
+                      Sau
                       <ChevronRight className='h-4 w-4 ml-1' />
                     </Button>
                   </div>

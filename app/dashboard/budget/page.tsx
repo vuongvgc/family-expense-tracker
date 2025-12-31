@@ -28,9 +28,9 @@ export default async function BudgetPage({ searchParams }: BudgetPageProps) {
       <div className='space-y-6'>
         {/* Header */}
         <div>
-          <h2 className='text-3xl font-bold text-gray-900'>Budget Management</h2>
+          <h2 className='text-3xl font-bold text-gray-900'>Quản Lý Ngân Sách</h2>
           <p className='text-muted-foreground mt-1'>
-            Plan your monthly spending and track progress in real-time
+            Lập kế hoạch chi tiêu hàng tháng và theo dõi tiến độ theo thời gian thực
           </p>
         </div>
 

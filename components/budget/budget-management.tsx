@@ -47,18 +47,18 @@ interface BudgetManagementProps {
 }
 
 const MONTHS = [
-  { value: 1, label: 'January' },
-  { value: 2, label: 'February' },
-  { value: 3, label: 'March' },
-  { value: 4, label: 'April' },
-  { value: 5, label: 'May' },
-  { value: 6, label: 'June' },
-  { value: 7, label: 'July' },
-  { value: 8, label: 'August' },
-  { value: 9, label: 'September' },
-  { value: 10, label: 'October' },
-  { value: 11, label: 'November' },
-  { value: 12, label: 'December' },
+  { value: 1, label: 'Tháng 1' },
+  { value: 2, label: 'Tháng 2' },
+  { value: 3, label: 'Tháng 3' },
+  { value: 4, label: 'Tháng 4' },
+  { value: 5, label: 'Tháng 5' },
+  { value: 6, label: 'Tháng 6' },
+  { value: 7, label: 'Tháng 7' },
+  { value: 8, label: 'Tháng 8' },
+  { value: 9, label: 'Tháng 9' },
+  { value: 10, label: 'Tháng 10' },
+  { value: 11, label: 'Tháng 11' },
+  { value: 12, label: 'Tháng 12' },
 ];
 
 const YEARS = Array.from({ length: 5 }, (_, i) => {
@@ -113,8 +113,8 @@ export function BudgetManagement({ initialData }: BudgetManagementProps) {
 
     if (result.success) {
       toast({
-        title: 'Success',
-        description: 'Budget updated successfully',
+        title: 'Thành Công',
+        description: 'Cập nhật ngân sách thành công',
       });
 
       // Update local state optimistically
@@ -128,7 +128,7 @@ export function BudgetManagement({ initialData }: BudgetManagementProps) {
       setEditingCategory(null);
     } else {
       toast({
-        title: 'Error',
+        title: 'Lỗi',
         description: result.message,
         variant: 'destructive',
       });
@@ -148,13 +148,13 @@ export function BudgetManagement({ initialData }: BudgetManagementProps) {
 
     if (result.success) {
       toast({
-        title: 'Success',
+        title: 'Thành Công',
         description: result.message,
       });
       router.refresh();
     } else {
       toast({
-        title: 'Error',
+        title: 'Lỗi',
         description: result.message,
         variant: 'destructive',
       });
@@ -177,9 +177,9 @@ export function BudgetManagement({ initialData }: BudgetManagementProps) {
         <CardHeader>
           <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
             <div>
-              <CardTitle>Monthly Budget Plan</CardTitle>
+              <CardTitle>Kế Hoạch Ngân Sách Hàng Tháng</CardTitle>
               <CardDescription>
-                Set spending limits for each category and track your progress
+                Đặt giới hạn chi tiêu cho từng danh mục và theo dõi tiến độ
               </CardDescription>
             </div>
             <div className='flex items-center gap-3'>
@@ -222,7 +222,7 @@ export function BudgetManagement({ initialData }: BudgetManagementProps) {
                 disabled={isCloning}
               >
                 <Copy className='h-4 w-4 mr-2' />
-                Clone from {MONTHS[prevMonth - 1].label}
+                Sao Chép từ {MONTHS[prevMonth - 1].label}
               </Button>
             </div>
           </div>
@@ -233,21 +233,21 @@ export function BudgetManagement({ initialData }: BudgetManagementProps) {
       <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
         <Card>
           <CardHeader className='pb-3'>
-            <CardDescription>Total Budget</CardDescription>
+            <CardDescription>Tổng Ngân Sách</CardDescription>
             <CardTitle className='text-2xl text-blue-600'>
               {formatCurrency(summary.totalBudget)}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <p className='text-xs text-muted-foreground'>
-              Total planned spending limit
+              Tổng giới hạn chi tiêu dự kiến
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className='pb-3'>
-            <CardDescription>Total Spent</CardDescription>
+            <CardDescription>Tổng Đã Chi</CardDescription>
             <CardTitle className='text-2xl text-gray-600'>
               {formatCurrency(summary.totalSpent)}
             </CardTitle>
@@ -257,15 +257,15 @@ export function BudgetManagement({ initialData }: BudgetManagementProps) {
               {summary.totalBudget > 0
                 ? `${((summary.totalSpent / summary.totalBudget) * 100).toFixed(
                     1
-                  )}% of budget`
-                : 'No budget set'}
+                  )}% ngân sách`
+                : 'Chưa đặt ngân sách'}
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className='pb-3'>
-            <CardDescription>Remaining</CardDescription>
+            <CardDescription>Còn Lại</CardDescription>
             <CardTitle
               className={`text-2xl flex items-center gap-2 ${
                 summary.remaining < 0 ? 'text-red-600' : 'text-green-600'
@@ -285,7 +285,7 @@ export function BudgetManagement({ initialData }: BudgetManagementProps) {
                 summary.remaining < 0 ? 'text-red-600' : 'text-green-600'
               }`}
             >
-              {summary.remaining < 0 ? 'Over budget' : 'Under budget'}
+              {summary.remaining < 0 ? 'Vượt ngân sách' : 'Dưới ngân sách'}
             </p>
           </CardContent>
         </Card>
@@ -294,15 +294,15 @@ export function BudgetManagement({ initialData }: BudgetManagementProps) {
       {/* Budget Grid */}
       <Card>
         <CardHeader>
-          <CardTitle>Category Budgets</CardTitle>
+          <CardTitle>Ngân Sách Theo Danh Mục</CardTitle>
           <CardDescription>
-            Set limits and monitor spending for each category
+            Đặt giới hạn và theo dõi chi tiêu cho từng danh mục
           </CardDescription>
         </CardHeader>
         <CardContent>
           {categories.length === 0 ? (
             <div className='text-center py-12 text-muted-foreground'>
-              No expense categories found. Create categories first.
+              Không tìm thấy danh mục chi tiêu. Hãy tạo danh mục trước.
             </div>
           ) : (
             <div className='space-y-6'>
@@ -329,7 +329,7 @@ export function BudgetManagement({ initialData }: BudgetManagementProps) {
                         <div>
                           <h3 className='font-medium'>{category.categoryName}</h3>
                           <p className='text-sm text-muted-foreground'>
-                            Spent: {formatCurrency(category.spent)}
+                            Đã chi: {formatCurrency(category.spent)}
                             {category.limit > 0 &&
                               ` / ${formatCurrency(category.limit)}`}
                           </p>
@@ -338,7 +338,7 @@ export function BudgetManagement({ initialData }: BudgetManagementProps) {
                       <div className='flex items-end gap-2'>
                         <div className='w-[200px]'>
                           <label className='text-xs text-muted-foreground block mb-1'>
-                            Budget Limit
+                            Giới Hạn Ngân Sách
                           </label>
                           <MoneyInput
                             value={currentValue}
@@ -349,7 +349,7 @@ export function BudgetManagement({ initialData }: BudgetManagementProps) {
                               })
                             }
                             disabled={savingCategory === category.categoryId}
-                            placeholder='Set limit'
+                            placeholder='Đặt giới hạn'
                           />
                         </div>
                         {isEditing && (
@@ -365,8 +365,8 @@ export function BudgetManagement({ initialData }: BudgetManagementProps) {
                               disabled={savingCategory === category.categoryId}
                             >
                               {savingCategory === category.categoryId
-                                ? 'Saving...'
-                                : 'Save'}
+                                ? 'Đang lưu...'
+                                : 'Lưu'}
                             </Button>
                             <Button
                               size='sm'
@@ -374,7 +374,7 @@ export function BudgetManagement({ initialData }: BudgetManagementProps) {
                               onClick={handleCancelEdit}
                               disabled={savingCategory === category.categoryId}
                             >
-                              Cancel
+                              Hủy
                             </Button>
                           </div>
                         )}
@@ -386,12 +386,11 @@ export function BudgetManagement({ initialData }: BudgetManagementProps) {
                       <div className='space-y-1'>
                         <div className='flex items-center justify-between text-xs'>
                           <span className='text-muted-foreground'>
-                            {percentage.toFixed(1)}% used
+                            Đã dùng {percentage.toFixed(1)}%
                           </span>
                           {isOverBudget && (
                             <span className='text-red-600 font-medium'>
-                              Over by{' '}
-                              {formatCurrency(category.spent - category.limit)}
+                              Vượt {formatCurrency(category.spent - category.limit)}
                             </span>
                           )}
                         </div>
@@ -419,23 +418,23 @@ export function BudgetManagement({ initialData }: BudgetManagementProps) {
       <AlertDialog open={showCloneDialog} onOpenChange={setShowCloneDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Clone Previous Month Budget?</AlertDialogTitle>
+            <AlertDialogTitle>Sao Chép Ngân Sách Tháng Trước?</AlertDialogTitle>
             <AlertDialogDescription>
-              This will copy all budget limits from{' '}
+              Thao tác này sẽ sao chép tất cả giới hạn ngân sách từ{' '}
               <strong>
                 {MONTHS[prevMonth - 1].label} {prevYear}
               </strong>{' '}
-              to{' '}
+              sang{' '}
               <strong>
                 {MONTHS[month - 1].label} {year}
               </strong>
-              . Existing budgets for the target month will be overwritten.
+              . Ngân sách hiện tại của tháng đích sẽ bị ghi đè.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={isCloning}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={isCloning}>Hủy</AlertDialogCancel>
             <AlertDialogAction onClick={handleClone} disabled={isCloning}>
-              {isCloning ? 'Cloning...' : 'Clone Budget'}
+              {isCloning ? 'Đang sao chép...' : 'Sao Chép Ngân Sách'}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

@@ -41,9 +41,9 @@ export default async function AnalyticsPage({ searchParams }: AnalyticsPageProps
       <div className='space-y-6'>
         {/* Header */}
         <div>
-          <h2 className='text-3xl font-bold text-gray-900'>Financial Analytics</h2>
+          <h2 className='text-3xl font-bold text-gray-900'>Phân Tích Tài Chính</h2>
           <p className='text-muted-foreground mt-1'>
-            Compare your expenses across different periods
+            So sánh chi tiêu của bạn qua các giai đoạn khác nhau
           </p>
         </div>
 

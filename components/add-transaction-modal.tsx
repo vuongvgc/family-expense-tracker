@@ -79,12 +79,12 @@ export default function AddTransactionModal() {
       <DialogContent className='sm:max-w-[600px] max-h-[90vh] overflow-y-auto'>
         <DialogHeader>
           <DialogTitle>
-            {editingTransaction ? 'Edit Transaction' : 'Add Transaction'}
+            {editingTransaction ? 'Sửa Giao Dịch' : 'Thêm Giao Dịch'}
           </DialogTitle>
           <DialogDescription>
             {editingTransaction
-              ? 'Update the transaction details'
-              : 'Record a new income or expense for your family'}
+              ? 'Cập nhật thông tin giao dịch'
+              : 'Ghi lại thu nhập hoặc chi tiêu mới cho gia đình của bạn'}
           </DialogDescription>
         </DialogHeader>
         <TransactionForm

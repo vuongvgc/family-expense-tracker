@@ -86,14 +86,14 @@ export default function SettingsPageClient({
 
       if (result?.error) {
         toast({
-          title: 'Error',
+          title: 'Lỗi',
           description: result.error,
           variant: 'destructive',
         });
       } else {
         toast({
-          title: 'Success',
-          description: 'Profile updated successfully',
+          title: 'Thành Công',
+          description: 'Cập nhật hồ sơ thành công',
         });
       }
     });
@@ -103,13 +103,13 @@ export default function SettingsPageClient({
     try {
       await navigator.clipboard.writeText(familyGroup.inviteCode);
       toast({
-        title: 'Copied!',
-        description: 'Invite code copied to clipboard',
+        title: 'Đã Sao Chép!',
+        description: 'Mã mời đã được sao chép vào clipboard',
       });
     } catch (error) {
       toast({
-        title: 'Error',
-        description: 'Failed to copy invite code',
+        title: 'Lỗi',
+        description: 'Không thể sao chép mã mời',
         variant: 'destructive',
       });
     }
@@ -123,14 +123,14 @@ export default function SettingsPageClient({
 
       if (result?.error) {
         toast({
-          title: 'Error',
+          title: 'Lỗi',
           description: result.error,
           variant: 'destructive',
         });
       } else {
         toast({
-          title: 'Success',
-          description: 'Member removed successfully',
+          title: 'Thành Công',
+          description: 'Xóa thành viên thành công',
         });
       }
 
@@ -144,7 +144,7 @@ export default function SettingsPageClient({
 
       if (result?.error) {
         toast({
-          title: 'Error',
+          title: 'Lỗi',
           description: result.error,
           variant: 'destructive',
         });
@@ -160,9 +160,9 @@ export default function SettingsPageClient({
       {/* Personal Profile Card */}
       <Card>
         <CardHeader>
-          <CardTitle>My Profile</CardTitle>
+          <CardTitle>Hồ Sơ Của Tôi</CardTitle>
           <CardDescription>
-            Manage your personal information and preferences
+            Quản lý thông tin cá nhân và tùy chọn của bạn
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -179,21 +179,22 @@ export default function SettingsPageClient({
                 <p className='text-sm font-medium'>{user.name}</p>
                 <p className='text-sm text-muted-foreground'>{user.email}</p>
                 <p className='text-xs text-muted-foreground mt-1'>
-                  Role: {user.role === UserRole.ADMIN ? 'Admin' : 'Member'}
+                  Vai trò:{' '}
+                  {user.role === UserRole.ADMIN ? 'Quản Trị Viên' : 'Thành Viên'}
                 </p>
               </div>
             </div>
 
             {/* Display Name Input */}
             <div className='space-y-2'>
-              <Label htmlFor='name'>Display Name</Label>
+              <Label htmlFor='name'>Tên Hiển Thị</Label>
               <Input
                 id='name'
                 name='name'
                 type='text'
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder='Enter your name'
+                placeholder='Nhập tên của bạn'
                 required
                 maxLength={100}
               />
@@ -210,7 +211,7 @@ export default function SettingsPageClient({
                 className='bg-muted'
               />
               <p className='text-xs text-muted-foreground'>
-                Email cannot be changed
+                Email không thể thay đổi
               </p>
             </div>
 
@@ -219,10 +220,10 @@ export default function SettingsPageClient({
               {isPending ? (
                 <>
                   <Loader2 className='mr-2 h-4 w-4 animate-spin' />
-                  Saving...
+                  Đang lưu...
                 </>
               ) : (
-                'Save Changes'
+                'Lưu Thay Đổi'
               )}
             </Button>
           </form>
@@ -232,15 +233,15 @@ export default function SettingsPageClient({
       {/* Family Management Card */}
       <Card>
         <CardHeader>
-          <CardTitle>Family Group: {familyGroup.name}</CardTitle>
+          <CardTitle>Nhóm Gia Đình: {familyGroup.name}</CardTitle>
           <CardDescription>
-            Manage your family members and invite new ones
+            Quản lý thành viên gia đình và mời thành viên mới
           </CardDescription>
         </CardHeader>
         <CardContent className='space-y-6'>
           {/* Invite Code Section */}
           <div className='space-y-2'>
-            <Label>Invite Code</Label>
+            <Label>Mã Mời</Label>
             <div className='flex items-center gap-2'>
               <div className='flex-1 p-3 bg-muted rounded-md font-mono text-sm'>
                 {familyGroup.inviteCode}
@@ -250,26 +251,28 @@ export default function SettingsPageClient({
                 variant='outline'
                 size='icon'
                 onClick={handleCopyInviteCode}
-                title='Copy invite code'
+                title='Sao chép mã mời'
               >
                 <Copy className='h-4 w-4' />
               </Button>
             </div>
             <p className='text-xs text-muted-foreground'>
-              Share this code with family members to invite them
+              Chia sẻ mã này với các thành viên gia đình để mời họ
             </p>
           </div>
 
           {/* Members List */}
           <div className='space-y-2'>
-            <Label>Family Members ({familyGroup.members.length})</Label>
+            <Label>Thành Viên Gia Đình ({familyGroup.members.length})</Label>
             <div className='border rounded-md'>
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Member</TableHead>
-                    <TableHead>Role</TableHead>
-                    {isAdmin && <TableHead className='text-right'>Action</TableHead>}
+                    <TableHead>Thành Viên</TableHead>
+                    <TableHead>Vai Trò</TableHead>
+                    {isAdmin && (
+                      <TableHead className='text-right'>Thao Tác</TableHead>
+                    )}
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -291,7 +294,7 @@ export default function SettingsPageClient({
                               {member.name}
                               {member.id === user.id && (
                                 <span className='text-muted-foreground ml-1'>
-                                  (You)
+                                  (Bạn)
                                 </span>
                               )}
                             </p>
@@ -309,7 +312,9 @@ export default function SettingsPageClient({
                               : 'bg-gray-100 text-gray-800'
                           }`}
                         >
-                          {member.role === UserRole.ADMIN ? 'Admin' : 'Member'}
+                          {member.role === UserRole.ADMIN
+                            ? 'Quản Trị Viên'
+                            : 'Thành Viên'}
                         </span>
                       </TableCell>
                       {isAdmin && (
@@ -331,20 +336,22 @@ export default function SettingsPageClient({
                               </AlertDialogTrigger>
                               <AlertDialogContent>
                                 <AlertDialogHeader>
-                                  <AlertDialogTitle>Remove Member?</AlertDialogTitle>
+                                  <AlertDialogTitle>
+                                    Xóa Thành Viên?
+                                  </AlertDialogTitle>
                                   <AlertDialogDescription>
-                                    Are you sure you want to remove{' '}
-                                    <strong>{member.name}</strong> from the family?
-                                    This action cannot be undone.
+                                    Bạn có chắc chắn muốn xóa{' '}
+                                    <strong>{member.name}</strong> khỏi gia đình
+                                    không? Thao tác này không thể hoàn tác.
                                   </AlertDialogDescription>
                                 </AlertDialogHeader>
                                 <AlertDialogFooter>
-                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                  <AlertDialogCancel>Hủy</AlertDialogCancel>
                                   <AlertDialogAction
                                     onClick={() => handleRemoveMember(member.id)}
                                     className='bg-destructive hover:bg-destructive/90'
                                   >
-                                    Remove
+                                    Xóa
                                   </AlertDialogAction>
                                 </AlertDialogFooter>
                               </AlertDialogContent>
@@ -365,20 +372,20 @@ export default function SettingsPageClient({
               <AlertDialogTrigger asChild>
                 <Button variant='destructive' disabled={isPending}>
                   <LogOut className='mr-2 h-4 w-4' />
-                  Leave Family
+                  Rời Gia Đình
                 </Button>
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
-                  <AlertDialogTitle>Leave Family Group?</AlertDialogTitle>
+                  <AlertDialogTitle>Rời Khỏi Nhóm Gia Đình?</AlertDialogTitle>
                   <AlertDialogDescription>
-                    Are you sure you want to leave this family? You will need a new
-                    invite code to rejoin. If you are the last member, the family
-                    group will be deleted permanently.
+                    Bạn có chắc chắn muốn rời khỏi gia đình này không? Bạn sẽ cần mã
+                    mời mới để tham gia lại. Nếu bạn là thành viên cuối cùng, nhóm
+                    gia đình sẽ bị xóa vĩnh viễn.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogCancel>Hủy</AlertDialogCancel>
                   <AlertDialogAction
                     onClick={handleLeaveFamily}
                     className='bg-destructive hover:bg-destructive/90'
@@ -386,10 +393,10 @@ export default function SettingsPageClient({
                     {isPending ? (
                       <>
                         <Loader2 className='mr-2 h-4 w-4 animate-spin' />
-                        Leaving...
+                        Đang rời...
                       </>
                     ) : (
-                      'Leave Family'
+                      'Rời Gia Đình'
                     )}
                   </AlertDialogAction>
                 </AlertDialogFooter>

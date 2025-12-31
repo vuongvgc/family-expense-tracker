@@ -47,32 +47,32 @@ interface DashboardHeaderProps {
 const mainNavItems = [
   {
     href: '/dashboard',
-    label: 'Dashboard',
+    label: 'Tổng Quan',
     icon: LayoutDashboard,
   },
   {
     href: '/dashboard/transactions',
-    label: 'Transactions',
+    label: 'Giao Dịch',
     icon: List,
   },
   {
     href: '/dashboard/analytics',
-    label: 'Analytics',
+    label: 'Phân Tích',
     icon: BarChart3,
   },
   {
     href: '/dashboard/budget',
-    label: 'Budget',
+    label: 'Ngân Sách',
     icon: Wallet,
   },
   {
     href: '/dashboard/debts',
-    label: 'Debts',
+    label: 'Khoản Nợ',
     icon: CreditCard,
   },
   {
     href: '/dashboard/assets',
-    label: 'Assets',
+    label: 'Tài Sản',
     icon: TrendingUp,
   },
 ];
@@ -80,12 +80,12 @@ const mainNavItems = [
 const userMenuItems = [
   {
     href: '/dashboard/settings',
-    label: 'Profile Settings',
+    label: 'Cài Đặt Hồ Sơ',
     icon: Settings,
   },
   {
     href: '/dashboard/categories',
-    label: 'Category Management',
+    label: 'Quản Lý Danh Mục',
     icon: FolderKanban,
   },
 ];
@@ -178,7 +178,7 @@ export default function DashboardHeader({
                     <p className='text-sm font-medium'>{userName}</p>
                     <p className='text-xs text-muted-foreground flex items-center gap-1'>
                       <Users className='h-3 w-3' />
-                      {role === 'ADMIN' ? 'Administrator' : 'Member'}
+                      {role === 'ADMIN' ? 'Quản Trị Viên' : 'Thành Viên'}
                     </p>
                   </div>
                 </DropdownMenuLabel>
@@ -203,7 +203,7 @@ export default function DashboardHeader({
                   className='flex items-center gap-2 cursor-pointer text-red-600 focus:text-red-600'
                 >
                   <LogOut className='h-4 w-4' />
-                  <span>Sign Out</span>
+                  <span>Đăng Xuất</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -217,7 +217,7 @@ export default function DashboardHeader({
               </SheetTrigger>
               <SheetContent side='right' className='w-[280px]'>
                 <SheetHeader>
-                  <SheetTitle>Menu</SheetTitle>
+                  <SheetTitle>Thực Đơn</SheetTitle>
                 </SheetHeader>
                 <div className='flex flex-col gap-4 mt-8'>
                   {/* User Info */}
@@ -230,7 +230,7 @@ export default function DashboardHeader({
                     <div className='flex flex-col'>
                       <span className='text-sm font-medium'>{userName}</span>
                       <span className='text-xs text-muted-foreground'>
-                        {role === 'ADMIN' ? 'Administrator' : 'Member'}
+                        {role === 'ADMIN' ? 'Quản Trị Viên' : 'Thành Viên'}
                       </span>
                     </div>
                   </div>
@@ -263,7 +263,7 @@ export default function DashboardHeader({
                   {/* Settings Section */}
                   <div className='border-t pt-4'>
                     <p className='text-xs font-medium text-muted-foreground uppercase mb-2 px-3'>
-                      Settings
+                      Cài Đặt
                     </p>
                     <nav className='flex flex-col gap-1'>
                       {userMenuItems.map((item) => {
@@ -297,7 +297,7 @@ export default function DashboardHeader({
                     className='flex items-center gap-2 mt-4 text-red-600 hover:text-red-600 border-red-200 hover:bg-red-50'
                   >
                     <LogOut className='h-4 w-4' />
-                    <span>Sign Out</span>
+                    <span>Đăng Xuất</span>
                   </Button>
                 </div>
               </SheetContent>

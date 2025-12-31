@@ -156,13 +156,13 @@ export default function TransactionForm({
       const result = await response.json();
 
       if (!response.ok) {
-        setError(result.error || 'Failed to save transaction');
+        setError(result.error || 'Không thể lưu giao dịch');
         return;
       }
 
       onSuccess();
     } catch (err) {
-      setError('An unexpected error occurred');
+      setError('Đã xảy ra lỗi không mong muốn');
     } finally {
       setIsLoading(false);
     }
@@ -181,7 +181,7 @@ export default function TransactionForm({
     <form onSubmit={handleSubmit} className='space-y-4'>
       <div className='grid grid-cols-2 gap-4'>
         <div className='space-y-2'>
-          <Label htmlFor='type'>Type</Label>
+          <Label htmlFor='type'>Loại</Label>
           <Select
             value={formData.type}
             onValueChange={(value) =>
@@ -196,14 +196,14 @@ export default function TransactionForm({
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value='EXPENSE'>Expense</SelectItem>
-              <SelectItem value='INCOME'>Income</SelectItem>
+              <SelectItem value='EXPENSE'>Chi Tiêu</SelectItem>
+              <SelectItem value='INCOME'>Thu Nhập</SelectItem>
             </SelectContent>
           </Select>
         </div>
 
         <div className='space-y-2'>
-          <Label htmlFor='amount'>Amount (VND)</Label>
+          <Label htmlFor='amount'>Số Tiền (VND)</Label>
           <MoneyInput
             id='amount'
             value={formData.amount}
@@ -214,7 +214,7 @@ export default function TransactionForm({
       </div>
 
       <div className='space-y-2'>
-        <Label htmlFor='category'>Category</Label>
+        <Label htmlFor='category'>Danh Mục</Label>
         <Select
           value={formData.categoryId}
           onValueChange={(value) => setFormData({ ...formData, categoryId: value })}
@@ -223,18 +223,18 @@ export default function TransactionForm({
           <SelectTrigger>
             <SelectValue
               placeholder={
-                loadingCategories ? 'Loading categories...' : 'Select category'
+                loadingCategories ? 'Đang tải danh mục...' : 'Chọn danh mục'
               }
             />
           </SelectTrigger>
           <SelectContent>
             {loadingCategories ? (
               <SelectItem value='loading' disabled>
-                Loading categories...
+                Đang tải danh mục...
               </SelectItem>
             ) : categories.length === 0 ? (
               <SelectItem value='empty' disabled>
-                No categories available
+                Không có danh mục nào
               </SelectItem>
             ) : (
               categories.map((cat) => (
@@ -248,10 +248,10 @@ export default function TransactionForm({
       </div>
 
       <div className='space-y-2'>
-        <Label htmlFor='description'>Description</Label>
+        <Label htmlFor='description'>Mô Tả</Label>
         <Input
           id='description'
-          placeholder='e.g., Groceries at supermarket'
+          placeholder='Ví dụ: Mua sắm tại siêu thị'
           value={formData.description}
           onChange={(e) => setFormData({ ...formData, description: e.target.value })}
           required
@@ -264,7 +264,7 @@ export default function TransactionForm({
           <div className='space-y-2'>
             <div className='flex items-center gap-1 text-xs text-muted-foreground'>
               <Sparkles className='h-3 w-3' />
-              <span>Smart Suggestions</span>
+              <span>Gợi Ý Thông Minh</span>
             </div>
             <div className='flex flex-wrap gap-2'>
               {currentSuggestions.map((suggestion, index) => (
@@ -283,7 +283,7 @@ export default function TransactionForm({
       </div>
 
       <div className='space-y-2'>
-        <Label htmlFor='date'>Date & Time</Label>
+        <Label htmlFor='date'>Ngày & Giờ</Label>
         <Input
           id='date'
           type='datetime-local'
@@ -305,12 +305,12 @@ export default function TransactionForm({
           {isLoading ? (
             <>
               <Loader2 className='mr-2 h-4 w-4 animate-spin' />
-              Saving...
+              Đang lưu...
             </>
           ) : transaction ? (
-            'Update Transaction'
+            'Cập Nhật Giao Dịch'
           ) : (
-            'Add Transaction'
+            'Thêm Giao Dịch'
           )}
         </Button>
         {onCancel && (
@@ -320,7 +320,7 @@ export default function TransactionForm({
             onClick={onCancel}
             disabled={isLoading}
           >
-            Cancel
+            Hủy
           </Button>
         )}
       </div>
@@ -336,13 +336,11 @@ export default function TransactionForm({
       <CardHeader>
         <div className='flex items-center justify-between'>
           <div>
-            <CardTitle>
-              {transaction ? 'Edit Transaction' : 'Add Transaction'}
-            </CardTitle>
+            <CardTitle>{transaction ? 'Sửa Giao Dịch' : 'Thêm Giao Dịch'}</CardTitle>
             <CardDescription>
               {transaction
-                ? 'Update the transaction details'
-                : 'Record a new income or expense'}
+                ? 'Cập nhật thông tin giao dịch'
+                : 'Ghi lại thu nhập hoặc chi tiêu mới'}
             </CardDescription>
           </div>
           {onCancel && (

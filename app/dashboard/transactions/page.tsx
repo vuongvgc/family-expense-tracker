@@ -17,7 +17,11 @@ export default async function TransactionsPage() {
     getCategories(),
   ]);
 
-  if (!transactionsResult.success || !summaryResult.success || categoriesResult.error) {
+  if (
+    !transactionsResult.success ||
+    !summaryResult.success ||
+    categoriesResult.error
+  ) {
     return (
       <div className='p-8'>
         <div className='text-center'>

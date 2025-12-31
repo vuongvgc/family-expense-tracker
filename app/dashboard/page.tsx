@@ -54,9 +54,9 @@ export default async function DashboardPage() {
   return (
     <div className='p-8'>
       <div className='mb-8'>
-        <h1 className='text-3xl font-bold mb-2'>Financial Dashboard</h1>
+        <h1 className='text-3xl font-bold mb-2'>Tổng Quan Tài Chính</h1>
         <p className='text-muted-foreground'>
-          Overview of your family's financial health
+          Tổng quan sức khỏe tài chính gia đình của bạn
         </p>
       </div>
 
@@ -67,7 +67,7 @@ export default async function DashboardPage() {
           <CardHeader className='pb-3'>
             <CardDescription className='flex items-center gap-2'>
               <DollarSign className='h-4 w-4' />
-              Net Worth
+              Tài Sản Ròng
             </CardDescription>
             <CardTitle className='text-3xl font-bold text-primary'>
               {formatCurrency(summary.netWorth)}
@@ -77,12 +77,12 @@ export default async function DashboardPage() {
             {summary.netWorth >= 0 ? (
               <p className='text-sm text-green-600 flex items-center gap-1'>
                 <TrendingUp className='h-4 w-4' />
-                Positive balance
+                Số dư dương
               </p>
             ) : (
               <p className='text-sm text-red-600 flex items-center gap-1'>
                 <TrendingDown className='h-4 w-4' />
-                Negative balance
+                Số dư âm
               </p>
             )}
           </CardContent>
@@ -93,14 +93,14 @@ export default async function DashboardPage() {
           <CardHeader className='pb-3'>
             <CardDescription className='flex items-center gap-2'>
               <Wallet className='h-4 w-4' />
-              Total Assets
+              Tổng Tài Sản
             </CardDescription>
             <CardTitle className='text-3xl font-bold text-green-600'>
               {formatCurrency(summary.totalAssets)}
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className='text-sm text-muted-foreground'>Current asset value</p>
+            <p className='text-sm text-muted-foreground'>Giá trị tài sản hiện tại</p>
           </CardContent>
         </Card>
 
@@ -109,14 +109,14 @@ export default async function DashboardPage() {
           <CardHeader className='pb-3'>
             <CardDescription className='flex items-center gap-2'>
               <CreditCard className='h-4 w-4' />
-              Total Debt
+              Tổng Khoản Nợ
             </CardDescription>
             <CardTitle className='text-3xl font-bold text-red-600'>
               {formatCurrency(summary.totalDebts)}
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className='text-sm text-muted-foreground'>Outstanding balance</p>
+            <p className='text-sm text-muted-foreground'>Số dư còn lại</p>
           </CardContent>
         </Card>
 
@@ -125,7 +125,7 @@ export default async function DashboardPage() {
           <CardHeader className='pb-3'>
             <CardDescription className='flex items-center gap-2'>
               <TrendingUp className='h-4 w-4' />
-              Budget Progress
+              Tiến Độ Ngân Sách
             </CardDescription>
             <CardTitle
               className={`text-3xl font-bold ${getBudgetColor(
@@ -153,8 +153,8 @@ export default async function DashboardPage() {
         {/* Left Side - Income vs Expenses Chart (60%) */}
         <Card className='lg:col-span-3'>
           <CardHeader>
-            <CardTitle>Income vs Expenses</CardTitle>
-            <CardDescription>Last 6 months comparison</CardDescription>
+            <CardTitle>Thu Nhập vs Chi Tiêu</CardTitle>
+            <CardDescription>So sánh 6 tháng gần đây</CardDescription>
           </CardHeader>
           <CardContent>
             <IncomeExpenseChart data={summary.incomeVsExpenses} />
@@ -166,15 +166,15 @@ export default async function DashboardPage() {
           <CardHeader>
             <CardTitle className='flex items-center gap-2'>
               <AlertCircle className='h-5 w-5 text-orange-500' />
-              Budget Watchlist
+              Danh Mục Theo Dõi
             </CardTitle>
-            <CardDescription>Categories exceeding 70% of budget</CardDescription>
+            <CardDescription>Danh mục vượt quá 70% ngân sách</CardDescription>
           </CardHeader>
           <CardContent>
             {watchlist.length === 0 ? (
               <div className='text-center py-8'>
                 <p className='text-muted-foreground text-sm'>
-                  All budgets are healthy! 🎉
+                  Tất cả ngân sách đều tốt! 🎉
                 </p>
               </div>
             ) : (
@@ -222,15 +222,15 @@ export default async function DashboardPage() {
           <CardHeader>
             <CardTitle className='flex items-center gap-2'>
               <CreditCard className='h-5 w-5' />
-              Active Debts
+              Khoản Nợ Đang Hoạt Động
             </CardTitle>
-            <CardDescription>Track your debt repayment progress</CardDescription>
+            <CardDescription>Theo dõi tiến độ trả nợ của bạn</CardDescription>
           </CardHeader>
           <CardContent>
             {debts.length === 0 ? (
               <div className='text-center py-8'>
                 <p className='text-muted-foreground text-sm'>
-                  No active debts. Great job! 🎉
+                  Không có khoản nợ nào. Tuyệt vời! 🎉
                 </p>
               </div>
             ) : (
@@ -243,7 +243,7 @@ export default async function DashboardPage() {
                         {debt.dueDate && (
                           <p className='text-xs text-muted-foreground flex items-center gap-1'>
                             <Calendar className='h-3 w-3' />
-                            Due: {format(new Date(debt.dueDate), 'MMM dd, yyyy')}
+                            Hạn: {format(new Date(debt.dueDate), 'MMM dd, yyyy')}
                           </p>
                         )}
                       </div>
@@ -253,7 +253,7 @@ export default async function DashboardPage() {
                     </div>
                     <Progress value={debt.progress} className='h-2' />
                     <p className='text-xs text-muted-foreground'>
-                      {formatCurrency(debt.paidAmount)} paid of{' '}
+                      Đã trả {formatCurrency(debt.paidAmount)} trong tổng số{' '}
                       {formatCurrency(debt.totalAmount)} ({debt.progress.toFixed(0)}
                       %)
                     </p>
@@ -269,14 +269,16 @@ export default async function DashboardPage() {
           <CardHeader>
             <CardTitle className='flex items-center gap-2'>
               <DollarSign className='h-5 w-5' />
-              Recent Transactions
+              Giao Dịch Gần Đây
             </CardTitle>
-            <CardDescription>Your latest 5 transactions</CardDescription>
+            <CardDescription>5 giao dịch mới nhất</CardDescription>
           </CardHeader>
           <CardContent>
             {transactions.length === 0 ? (
               <div className='text-center py-8'>
-                <p className='text-muted-foreground text-sm'>No transactions yet</p>
+                <p className='text-muted-foreground text-sm'>
+                  Chưa có giao dịch nào
+                </p>
               </div>
             ) : (
               <div className='space-y-3'>
@@ -295,7 +297,7 @@ export default async function DashboardPage() {
                         </p>
                         <p className='text-xs text-muted-foreground'>
                           {format(new Date(transaction.date), 'MMM dd, yyyy')} •{' '}
-                          {transaction.category?.name || 'Uncategorized'}
+                          {transaction.category?.name || 'Chưa phân loại'}
                         </p>
                       </div>
                     </div>
