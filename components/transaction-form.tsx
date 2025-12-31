@@ -142,7 +142,12 @@ export default function TransactionForm({
               <Select
                 id='type'
                 value={formData.type}
-                onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    type: e.target.value as TransactionType,
+                  })
+                }
                 disabled={isLoading}
               >
                 <option value='EXPENSE'>Expense</option>
@@ -169,7 +174,7 @@ export default function TransactionForm({
               id='category'
               value={formData.category}
               onChange={(e) =>
-                setFormData({ ...formData, category: e.target.value })
+                setFormData({ ...formData, category: e.target.value as Category })
               }
               disabled={isLoading}
             >

@@ -1,8 +1,10 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@/auth';
 import prisma from '@/lib/prisma';
+import { Category } from '@prisma/client';
+import { TransactionFilterWhereClause } from '@/lib/types';
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const session = await auth();
 
@@ -10,11 +12,48 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const { searchParams } = new URL(request.url);
+    const startDate = searchParams.get('startDate');
+    const endDate = searchParams.get('endDate');
+    const categoryId = searchParams.get('categoryId');
+
+    // Build base where clause
+    const baseWhere: TransactionFilterWhereClause = {
+      familyGroupId: session.user.familyGroupId,
+    };
+
+    // Add date range filter
+    if (startDate && endDate) {
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+
+      // Create new Date at end of day to include all transactions
+      const endOfDay = new Date(
+        end.getFullYear(),
+        end.getMonth(),
+        end.getDate(),
+        23,
+        59,
+        59,
+        999
+      );
+
+      baseWhere.date = {
+        gte: start,
+        lte: endOfDay,
+      };
+    }
+
+    // Add category filter if specified
+    if (categoryId) {
+      baseWhere.category = categoryId as Category;
+    }
+
     // Get expense breakdown by category
     const expensesByCategory = await prisma.transaction.groupBy({
       by: ['category'],
       where: {
-        familyGroupId: session.user.familyGroupId,
+        ...baseWhere,
         type: 'EXPENSE',
       },
       _sum: {
@@ -29,7 +68,7 @@ export async function GET() {
     const incomeByCategory = await prisma.transaction.groupBy({
       by: ['category'],
       where: {
-        familyGroupId: session.user.familyGroupId,
+        ...baseWhere,
         type: 'INCOME',
       },
       _sum: {

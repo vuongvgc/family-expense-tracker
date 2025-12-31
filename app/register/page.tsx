@@ -92,7 +92,7 @@ export default function RegisterPage() {
         </CardHeader>
 
         <CardContent>
-          <Tabs value={activeTab} className='w-full'>
+          <Tabs className='w-full'>
             <TabsList className='grid w-full grid-cols-2 mb-6'>
               <TabsTrigger
                 active={activeTab === 'create'}
@@ -119,10 +119,7 @@ export default function RegisterPage() {
             </TabsList>
 
             {/* CREATE FAMILY TAB */}
-            <TabsContent
-              value='create'
-              className={activeTab === 'create' ? '' : 'hidden'}
-            >
+            <TabsContent className={activeTab === 'create' ? '' : 'hidden'}>
               <form onSubmit={handleSubmit} className='space-y-4'>
                 <div className='space-y-2'>
                   <Label htmlFor='create-name'>Your Name</Label>
@@ -210,10 +207,7 @@ export default function RegisterPage() {
             </TabsContent>
 
             {/* JOIN FAMILY TAB */}
-            <TabsContent
-              value='join'
-              className={activeTab === 'join' ? '' : 'hidden'}
-            >
+            <TabsContent className={activeTab === 'join' ? '' : 'hidden'}>
               <form onSubmit={handleSubmit} className='space-y-4'>
                 <div className='space-y-2'>
                   <Label htmlFor='join-name'>Your Name</Label>

@@ -1,19 +1,19 @@
-import NextAuth, { type DefaultSession } from "next-auth";
-import { PrismaAdapter } from "@auth/prisma-adapter";
-import CredentialsProvider from "next-auth/providers/credentials";
-import bcrypt from "bcryptjs";
-import { z } from "zod";
-import prisma from "@/lib/prisma";
-import { UserRole } from "@prisma/client";
+import NextAuth, { type DefaultSession } from 'next-auth';
+import { PrismaAdapter } from '@auth/prisma-adapter';
+import CredentialsProvider from 'next-auth/providers/credentials';
+import bcrypt from 'bcryptjs';
+import { z } from 'zod';
+import prisma from '@/lib/prisma';
+import { UserRole } from '@prisma/client';
 
 // Extend the built-in session types
-declare module "next-auth" {
+declare module 'next-auth' {
   interface Session {
     user: {
       id: string;
       familyGroupId: string;
       role: UserRole;
-    } & DefaultSession["user"];
+    } & DefaultSession['user'];
   }
 
   interface User {
@@ -22,34 +22,25 @@ declare module "next-auth" {
   }
 }
 
-declare module "next-auth/jwt" {
-  interface JWT {
-    id: string;
-    familyGroupId: string;
-    role: UserRole;
-  }
-}
-
 const loginSchema = z.object({
-  email: z.string().email("Invalid email address"),
-  password: z.string().min(1, "Password is required"),
+  email: z.string().email('Invalid email address'),
+  password: z.string().min(1, 'Password is required'),
 });
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  adapter: PrismaAdapter(prisma),
   session: {
-    strategy: "jwt",
+    strategy: 'jwt',
   },
   pages: {
-    signIn: "/login",
-    error: "/login",
+    signIn: '/login',
+    error: '/login',
   },
   providers: [
     CredentialsProvider({
-      name: "credentials",
+      name: 'credentials',
       credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" },
+        email: { label: 'Email', type: 'email' },
+        password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
         try {
@@ -90,7 +81,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             role: user.role,
           };
         } catch (error) {
-          console.error("Authorization error:", error);
+          console.error('Authorization error:', error);
           return null;
         }
       },
@@ -109,9 +100,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async session({ session, token }) {
       // Add custom fields to session
       if (token && session.user) {
-        session.user.id = token.id;
-        session.user.familyGroupId = token.familyGroupId;
-        session.user.role = token.role;
+        session.user.id = token.id as string;
+        session.user.familyGroupId = token.familyGroupId as string;
+        session.user.role = token.role as UserRole;
       }
       return session;
     },

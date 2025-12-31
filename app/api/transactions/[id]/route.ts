@@ -13,9 +13,13 @@ const transactionSchema = z.object({
 });
 
 // GET /api/transactions/[id] - Fetch a single transaction
-export async function GET(request: Request, { params }: { params: { id: string } }) {
+export async function GET(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
     const session = await auth();
+    const { id } = await params;
 
     if (!session?.user?.familyGroupId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -23,7 +27,7 @@ export async function GET(request: Request, { params }: { params: { id: string }
 
     const transaction = await prisma.transaction.findFirst({
       where: {
-        id: params.id,
+        id,
         familyGroupId: session.user.familyGroupId, // Ensure it belongs to user's family
       },
       include: {
@@ -51,9 +55,13 @@ export async function GET(request: Request, { params }: { params: { id: string }
 }
 
 // PUT /api/transactions/[id] - Update a transaction
-export async function PUT(request: Request, { params }: { params: { id: string } }) {
+export async function PUT(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
     const session = await auth();
+    const { id } = await params;
 
     if (!session?.user?.familyGroupId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -65,7 +73,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
     // Verify transaction belongs to user's family
     const existingTransaction = await prisma.transaction.findFirst({
       where: {
-        id: params.id,
+        id,
         familyGroupId: session.user.familyGroupId,
       },
     });
@@ -77,7 +85,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
     // Update transaction
     const transaction = await prisma.transaction.update({
       where: {
-        id: params.id,
+        id,
       },
       data: {
         amount: validatedData.amount,
@@ -123,10 +131,11 @@ export async function PUT(request: Request, { params }: { params: { id: string }
 // DELETE /api/transactions/[id] - Delete a transaction
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth();
+    const { id } = await params;
 
     if (!session?.user?.familyGroupId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -135,7 +144,7 @@ export async function DELETE(
     // Verify transaction belongs to user's family
     const existingTransaction = await prisma.transaction.findFirst({
       where: {
-        id: params.id,
+        id,
         familyGroupId: session.user.familyGroupId,
       },
     });
@@ -146,7 +155,7 @@ export async function DELETE(
 
     await prisma.transaction.delete({
       where: {
-        id: params.id,
+        id,
       },
     });
 

@@ -3,6 +3,7 @@ import { auth } from '@/auth';
 import prisma from '@/lib/prisma';
 import { z } from 'zod';
 import { TransactionType, Category } from '@prisma/client';
+import { TransactionFilterWhereClause } from '@/lib/types';
 
 // Validation schema for creating/updating transactions
 const transactionSchema = z.object({
@@ -26,11 +27,46 @@ export async function GET(request: Request) {
     const limit = parseInt(searchParams.get('limit') || '50');
     const offset = parseInt(searchParams.get('offset') || '0');
 
+    // Filter parameters
+    const startDate = searchParams.get('startDate');
+    const endDate = searchParams.get('endDate');
+    const categoryId = searchParams.get('categoryId');
+
+    // Build where clause with filters
+    const whereClause: TransactionFilterWhereClause = {
+      familyGroupId: session.user.familyGroupId,
+    };
+
+    // Add date range filter
+    if (startDate && endDate) {
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+
+      // Create new Date at end of day to include all transactions
+      const endOfDay = new Date(
+        end.getFullYear(),
+        end.getMonth(),
+        end.getDate(),
+        23,
+        59,
+        59,
+        999
+      );
+
+      whereClause.date = {
+        gte: start,
+        lte: endOfDay,
+      };
+    }
+
+    // Add category filter
+    if (categoryId) {
+      whereClause.category = categoryId as Category;
+    }
+
     // Fetch transactions for the family, including creator info
     const transactions = await prisma.transaction.findMany({
-      where: {
-        familyGroupId: session.user.familyGroupId,
-      },
+      where: whereClause,
       include: {
         createdBy: {
           select: {
@@ -48,9 +84,7 @@ export async function GET(request: Request) {
 
     // Get total count for pagination
     const total = await prisma.transaction.count({
-      where: {
-        familyGroupId: session.user.familyGroupId,
-      },
+      where: whereClause,
     });
 
     return NextResponse.json({

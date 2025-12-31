@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Plus, Loader2 } from 'lucide-react';
 import TransactionForm from '@/components/transaction-form';
@@ -8,6 +9,7 @@ import TransactionList from '@/components/transaction-list';
 import BalanceSummary from '@/components/balance-summary';
 import ExpenseChart from '@/components/expense-chart';
 import { TransactionType, Category } from '@prisma/client';
+import { buildFilterQuery } from '@/lib/filters';
 
 interface Transaction {
   id: string;
@@ -22,21 +24,35 @@ interface Transaction {
   };
 }
 
+interface CategoryData {
+  category: Category;
+  amount: number;
+  count: number;
+  percentage: string;
+}
+
+interface AnalyticsData {
+  expenses: {
+    byCategory: CategoryData[];
+    total: number;
+  };
+  income: {
+    byCategory: CategoryData[];
+    total: number;
+  };
+}
+
 export default function DashboardPage() {
+  const searchParams = useSearchParams();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [analytics, setAnalytics] = useState<any>(null);
+  const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(
     null
   );
   const [currentUserId, setCurrentUserId] = useState<string>('');
-
-  useEffect(() => {
-    fetchTransactions();
-    fetchAnalytics();
-    fetchCurrentUser();
-  }, []);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   const fetchCurrentUser = async () => {
     try {
@@ -50,34 +66,40 @@ export default function DashboardPage() {
     }
   };
 
-  const fetchTransactions = async () => {
-    try {
-      setIsLoading(true);
-      const response = await fetch('/api/transactions');
-      const data = await response.json();
-      setTransactions(data.transactions || []);
-    } catch (error) {
-      console.error('Error fetching transactions:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
 
-  const fetchAnalytics = async () => {
-    try {
-      const response = await fetch('/api/analytics');
-      const data = await response.json();
-      setAnalytics(data);
-    } catch (error) {
-      console.error('Error fetching analytics:', error);
-    }
-  };
+        // Build filter query from current searchParams
+        const filterQuery = buildFilterQuery(searchParams);
+
+        // Fetch transactions and analytics in parallel
+        const [transactionsRes, analyticsRes] = await Promise.all([
+          fetch(`/api/transactions?${filterQuery}`),
+          fetch(`/api/analytics?${filterQuery}`),
+        ]);
+
+        const transactionsData = await transactionsRes.json();
+        const analyticsData = await analyticsRes.json();
+
+        setTransactions(transactionsData.transactions || []);
+        setAnalytics(analyticsData);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+    fetchCurrentUser();
+  }, [searchParams, refreshTrigger]);
 
   const handleFormSuccess = () => {
     setShowForm(false);
     setEditingTransaction(null);
-    fetchTransactions();
-    fetchAnalytics();
+    setRefreshTrigger((prev) => prev + 1);
   };
 
   const handleEdit = (transaction: Transaction) => {
@@ -92,8 +114,7 @@ export default function DashboardPage() {
       });
 
       if (response.ok) {
-        fetchTransactions();
-        fetchAnalytics();
+        setRefreshTrigger((prev) => prev + 1);
       }
     } catch (error) {
       console.error('Error deleting transaction:', error);
