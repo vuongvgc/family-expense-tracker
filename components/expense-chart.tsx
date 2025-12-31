@@ -2,11 +2,11 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
-import { Category } from '@prisma/client';
 import { formatCurrency } from '@/lib/utils';
 
 interface CategoryData {
-  category: Category;
+  category: string;
+  icon: string;
   amount: number;
   count: number;
   percentage: string;
@@ -16,19 +16,6 @@ interface ExpenseChartProps {
   data: CategoryData[];
   total: number;
 }
-
-const CATEGORY_LABELS: Record<Category, string> = {
-  FOOD: 'Food & Dining',
-  TRANSPORT: 'Transport',
-  UTILITIES: 'Utilities',
-  HEALTHCARE: 'Healthcare',
-  EDUCATION: 'Education',
-  ENTERTAINMENT: 'Entertainment',
-  SHOPPING: 'Shopping',
-  SALARY: 'Salary',
-  INVESTMENT: 'Investment',
-  OTHER: 'Other',
-};
 
 const COLORS = [
   '#ef4444', // red
@@ -65,7 +52,8 @@ export default function ExpenseChart({ data, total }: ExpenseChartProps) {
 
   // Prepare chart data
   const chartData = sortedData.map((item) => ({
-    name: CATEGORY_LABELS[item.category],
+    name: item.category,
+    icon: item.icon,
     value: item.amount,
     percentage: item.percentage,
     count: item.count,
@@ -145,7 +133,7 @@ export default function ExpenseChart({ data, total }: ExpenseChartProps) {
                   />
                   <div>
                     <p className='text-sm font-medium'>
-                      {CATEGORY_LABELS[item.category]}
+                      {item.icon} {item.category}
                     </p>
                     <p className='text-xs text-muted-foreground'>
                       {item.count} transaction{item.count !== 1 ? 's' : ''}

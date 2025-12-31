@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/card';
 import { Edit, Trash2, TrendingUp, TrendingDown } from 'lucide-react';
 import { format } from 'date-fns';
-import { TransactionType, Category } from '@prisma/client';
+import { TransactionType } from '@prisma/client';
 import { formatCurrency } from '@/lib/utils';
 
 interface Transaction {
@@ -19,11 +19,16 @@ interface Transaction {
   amount: number;
   description: string;
   type: TransactionType;
-  category: Category;
+  categoryId: string | null;
   date: string;
   createdBy: {
     id: string;
     name: string;
+  };
+  category?: {
+    id: string;
+    name: string;
+    icon: string;
   };
 }
 
@@ -33,19 +38,6 @@ interface TransactionListProps {
   onDelete: (id: string) => void;
   currentUserId: string;
 }
-
-const CATEGORY_LABELS: Record<Category, string> = {
-  FOOD: 'Food & Dining',
-  TRANSPORT: 'Transport',
-  UTILITIES: 'Utilities',
-  HEALTHCARE: 'Healthcare',
-  EDUCATION: 'Education',
-  ENTERTAINMENT: 'Entertainment',
-  SHOPPING: 'Shopping',
-  SALARY: 'Salary',
-  INVESTMENT: 'Investment',
-  OTHER: 'Other',
-};
 
 export default function TransactionList({
   transactions,
@@ -116,9 +108,11 @@ export default function TransactionList({
                     <h3 className='font-semibold text-base'>
                       {transaction.description}
                     </h3>
-                    <span className='text-xs bg-secondary text-secondary-foreground px-2 py-0.5 rounded-full'>
-                      {CATEGORY_LABELS[transaction.category]}
-                    </span>
+                    {transaction.category && (
+                      <span className='text-xs bg-secondary text-secondary-foreground px-2 py-0.5 rounded-full'>
+                        {transaction.category.icon} {transaction.category.name}
+                      </span>
+                    )}
                   </div>
 
                   <div className='flex items-center gap-3 mt-1 text-sm text-muted-foreground'>

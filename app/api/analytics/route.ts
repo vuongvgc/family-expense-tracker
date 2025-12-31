@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@/auth';
 import prisma from '@/lib/prisma';
-import { Category } from '@prisma/client';
 import { TransactionFilterWhereClause } from '@/lib/types';
 
 export async function GET(request: Request) {
@@ -46,12 +45,12 @@ export async function GET(request: Request) {
 
     // Add category filter if specified
     if (categoryId) {
-      baseWhere.category = categoryId as Category;
+      baseWhere.categoryId = categoryId;
     }
 
     // Get expense breakdown by category
     const expensesByCategory = await prisma.transaction.groupBy({
-      by: ['category'],
+      by: ['categoryId'],
       where: {
         ...baseWhere,
         type: 'EXPENSE',
@@ -66,7 +65,7 @@ export async function GET(request: Request) {
 
     // Get income breakdown by category
     const incomeByCategory = await prisma.transaction.groupBy({
-      by: ['category'],
+      by: ['categoryId'],
       where: {
         ...baseWhere,
         type: 'INCOME',
@@ -78,6 +77,19 @@ export async function GET(request: Request) {
         id: true,
       },
     });
+
+    // Fetch category details for all categoryIds
+    const allCategoryIds = [
+      ...expensesByCategory.map((item) => item.categoryId),
+      ...incomeByCategory.map((item) => item.categoryId),
+    ].filter(Boolean) as string[];
+
+    const categories = await prisma.category.findMany({
+      where: { id: { in: allCategoryIds } },
+      select: { id: true, name: true, icon: true },
+    });
+
+    const categoryMap = Object.fromEntries(categories.map((cat) => [cat.id, cat]));
 
     // Calculate totals
     const totalExpenses = expensesByCategory.reduce(
@@ -91,25 +103,35 @@ export async function GET(request: Request) {
     );
 
     // Format data with percentages
-    const expensesFormatted = expensesByCategory.map((item) => ({
-      category: item.category,
-      amount: Number(item._sum.amount || 0),
-      count: item._count.id,
-      percentage:
-        totalExpenses > 0
-          ? ((Number(item._sum.amount || 0) / totalExpenses) * 100).toFixed(1)
-          : '0',
-    }));
+    const expensesFormatted = expensesByCategory.map((item) => {
+      const cat = item.categoryId ? categoryMap[item.categoryId] : null;
+      return {
+        category: cat?.name || 'Uncategorized',
+        icon: cat?.icon || '❓',
+        categoryId: item.categoryId,
+        amount: Number(item._sum.amount || 0),
+        count: item._count.id,
+        percentage:
+          totalExpenses > 0
+            ? ((Number(item._sum.amount || 0) / totalExpenses) * 100).toFixed(1)
+            : '0',
+      };
+    });
 
-    const incomeFormatted = incomeByCategory.map((item) => ({
-      category: item.category,
-      amount: Number(item._sum.amount || 0),
-      count: item._count.id,
-      percentage:
-        totalIncome > 0
-          ? ((Number(item._sum.amount || 0) / totalIncome) * 100).toFixed(1)
-          : '0',
-    }));
+    const incomeFormatted = incomeByCategory.map((item) => {
+      const cat = item.categoryId ? categoryMap[item.categoryId] : null;
+      return {
+        category: cat?.name || 'Uncategorized',
+        icon: cat?.icon || '❓',
+        categoryId: item.categoryId,
+        amount: Number(item._sum.amount || 0),
+        count: item._count.id,
+        percentage:
+          totalIncome > 0
+            ? ((Number(item._sum.amount || 0) / totalIncome) * 100).toFixed(1)
+            : '0',
+      };
+    });
 
     return NextResponse.json({
       expenses: {

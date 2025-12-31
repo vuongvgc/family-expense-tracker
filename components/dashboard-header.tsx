@@ -2,7 +2,14 @@
 
 import { signOut } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
-import { Home, LogOut, Users, Settings, LayoutDashboard } from 'lucide-react';
+import {
+  Home,
+  LogOut,
+  Users,
+  Settings,
+  LayoutDashboard,
+  FolderKanban,
+} from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
@@ -18,6 +25,11 @@ const navItems = [
     href: '/dashboard',
     label: 'Dashboard',
     icon: LayoutDashboard,
+  },
+  {
+    href: '/dashboard/categories',
+    label: 'Categories',
+    icon: FolderKanban,
   },
   {
     href: '/dashboard/settings',

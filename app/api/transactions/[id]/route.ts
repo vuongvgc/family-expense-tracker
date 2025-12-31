@@ -2,13 +2,13 @@ import { NextResponse } from 'next/server';
 import { auth } from '@/auth';
 import prisma from '@/lib/prisma';
 import { z } from 'zod';
-import { TransactionType, Category } from '@prisma/client';
+import { TransactionType } from '@prisma/client';
 
 const transactionSchema = z.object({
   amount: z.number().positive('Amount must be positive'),
   description: z.string().min(1, 'Description is required').max(200),
   type: z.nativeEnum(TransactionType),
-  category: z.nativeEnum(Category),
+  categoryId: z.string().optional().nullable(),
   date: z.string().datetime().optional(),
 });
 
@@ -28,13 +28,20 @@ export async function GET(
     const transaction = await prisma.transaction.findFirst({
       where: {
         id,
-        familyGroupId: session.user.familyGroupId, // Ensure it belongs to user's family
+        familyGroupId: session.user.familyGroupId,
       },
       include: {
         createdBy: {
           select: {
             id: true,
             name: true,
+          },
+        },
+        category: {
+          select: {
+            id: true,
+            name: true,
+            icon: true,
           },
         },
       },
@@ -91,7 +98,7 @@ export async function PUT(
         amount: validatedData.amount,
         description: validatedData.description,
         type: validatedData.type,
-        category: validatedData.category,
+        categoryId: validatedData.categoryId,
         date: validatedData.date ? new Date(validatedData.date) : undefined,
       },
       include: {
@@ -99,6 +106,13 @@ export async function PUT(
           select: {
             id: true,
             name: true,
+          },
+        },
+        category: {
+          select: {
+            id: true,
+            name: true,
+            icon: true,
           },
         },
       },

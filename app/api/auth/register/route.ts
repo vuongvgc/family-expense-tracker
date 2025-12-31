@@ -1,26 +1,27 @@
-import { NextResponse } from "next/server";
-import bcrypt from "bcryptjs";
-import { z } from "zod";
-import prisma from "@/lib/prisma";
+import { NextResponse } from 'next/server';
+import bcrypt from 'bcryptjs';
+import { z } from 'zod';
+import prisma from '@/lib/prisma';
+import { DEFAULT_CATEGORIES } from '@/lib/default-categories';
 
 // Validation schemas
 const createFamilySchema = z.object({
-  action: z.literal("create"),
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Invalid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-  familyName: z.string().min(2, "Family name must be at least 2 characters"),
+  action: z.literal('create'),
+  name: z.string().min(2, 'Name must be at least 2 characters'),
+  email: z.string().email('Invalid email address'),
+  password: z.string().min(6, 'Password must be at least 6 characters'),
+  familyName: z.string().min(2, 'Family name must be at least 2 characters'),
 });
 
 const joinFamilySchema = z.object({
-  action: z.literal("join"),
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Invalid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-  inviteCode: z.string().min(1, "Invite code is required"),
+  action: z.literal('join'),
+  name: z.string().min(2, 'Name must be at least 2 characters'),
+  email: z.string().email('Invalid email address'),
+  password: z.string().min(6, 'Password must be at least 6 characters'),
+  inviteCode: z.string().min(1, 'Invite code is required'),
 });
 
-const registerSchema = z.discriminatedUnion("action", [
+const registerSchema = z.discriminatedUnion('action', [
   createFamilySchema,
   joinFamilySchema,
 ]);
@@ -39,7 +40,7 @@ export async function POST(request: Request) {
 
     if (existingUser) {
       return NextResponse.json(
-        { error: "A user with this email already exists" },
+        { error: 'A user with this email already exists' },
         { status: 400 }
       );
     }
@@ -47,9 +48,9 @@ export async function POST(request: Request) {
     // Hash password
     const hashedPassword = await bcrypt.hash(validatedData.password, 10);
 
-    if (validatedData.action === "create") {
+    if (validatedData.action === 'create') {
       // CREATE NEW FAMILY FLOW
-      // Transaction to create both family and user atomically
+      // Transaction to create family, user, and default categories atomically
       const result = await prisma.$transaction(async (tx) => {
         // Create new family group
         const familyGroup = await tx.familyGroup.create({
@@ -64,9 +65,19 @@ export async function POST(request: Request) {
             name: validatedData.name,
             email: validatedData.email,
             password: hashedPassword,
-            role: "ADMIN",
+            role: 'ADMIN',
             familyGroupId: familyGroup.id,
           },
+        });
+
+        // Seed default categories for the new family
+        await tx.category.createMany({
+          data: DEFAULT_CATEGORIES.map((cat) => ({
+            name: cat.name,
+            type: cat.type,
+            icon: cat.icon,
+            familyGroupId: familyGroup.id,
+          })),
         });
 
         return { user, familyGroup };
@@ -75,7 +86,7 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           success: true,
-          message: "Family created successfully! You can now log in.",
+          message: 'Family created successfully! You can now log in.',
           inviteCode: result.familyGroup.inviteCode,
         },
         { status: 201 }
@@ -89,7 +100,7 @@ export async function POST(request: Request) {
 
       if (!familyGroup) {
         return NextResponse.json(
-          { error: "Invalid invite code. Please check and try again." },
+          { error: 'Invalid invite code. Please check and try again.' },
           { status: 404 }
         );
       }
@@ -100,7 +111,7 @@ export async function POST(request: Request) {
           name: validatedData.name,
           email: validatedData.email,
           password: hashedPassword,
-          role: "MEMBER",
+          role: 'MEMBER',
           familyGroupId: familyGroup.id,
         },
       });
@@ -114,15 +125,15 @@ export async function POST(request: Request) {
       );
     }
   } catch (error) {
-    console.error("Registration error:", error);
+    console.error('Registration error:', error);
 
     // Handle Zod validation errors
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
-          error: "Validation failed",
+          error: 'Validation failed',
           details: error.errors.map((err) => ({
-            field: err.path.join("."),
+            field: err.path.join('.'),
             message: err.message,
           })),
         },
@@ -132,7 +143,7 @@ export async function POST(request: Request) {
 
     // Generic error response
     return NextResponse.json(
-      { error: "An error occurred during registration. Please try again." },
+      { error: 'An error occurred during registration. Please try again.' },
       { status: 500 }
     );
   }

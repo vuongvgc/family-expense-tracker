@@ -8,7 +8,7 @@ import TransactionForm from '@/components/transaction-form';
 import TransactionList from '@/components/transaction-list';
 import BalanceSummary from '@/components/balance-summary';
 import ExpenseChart from '@/components/expense-chart';
-import { TransactionType, Category } from '@prisma/client';
+import { TransactionType } from '@prisma/client';
 import { buildFilterQuery } from '@/lib/filters';
 
 interface Transaction {
@@ -16,16 +16,23 @@ interface Transaction {
   amount: number;
   description: string;
   type: TransactionType;
-  category: Category;
+  categoryId: string | null;
   date: string;
   createdBy: {
     id: string;
     name: string;
   };
+  category?: {
+    id: string;
+    name: string;
+    icon: string;
+  };
 }
 
 interface CategoryData {
-  category: Category;
+  category: string;
+  icon: string;
+  categoryId: string | null;
   amount: number;
   count: number;
   percentage: string;

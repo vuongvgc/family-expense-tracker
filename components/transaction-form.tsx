@@ -14,15 +14,27 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Loader2, X } from 'lucide-react';
-import { TransactionType, Category } from '@prisma/client';
+import { TransactionType } from '@prisma/client';
+
+interface CategoryOption {
+  id: string;
+  name: string;
+  icon: string;
+  type: TransactionType;
+}
 
 interface Transaction {
   id: string;
   amount: number;
   description: string;
   type: TransactionType;
-  category: Category;
+  categoryId: string | null;
   date: string;
+  category?: {
+    id: string;
+    name: string;
+    icon: string;
+  };
 }
 
 interface TransactionFormProps {
@@ -31,19 +43,6 @@ interface TransactionFormProps {
   onCancel: () => void;
 }
 
-const CATEGORIES = [
-  { value: 'FOOD', label: 'Food & Dining' },
-  { value: 'TRANSPORT', label: 'Transport' },
-  { value: 'UTILITIES', label: 'Utilities' },
-  { value: 'HEALTHCARE', label: 'Healthcare' },
-  { value: 'EDUCATION', label: 'Education' },
-  { value: 'ENTERTAINMENT', label: 'Entertainment' },
-  { value: 'SHOPPING', label: 'Shopping' },
-  { value: 'SALARY', label: 'Salary' },
-  { value: 'INVESTMENT', label: 'Investment' },
-  { value: 'OTHER', label: 'Other' },
-];
-
 export default function TransactionForm({
   transaction,
   onSuccess,
@@ -51,16 +50,41 @@ export default function TransactionForm({
 }: TransactionFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string>('');
+  const [categories, setCategories] = useState<CategoryOption[]>([]);
+  const [loadingCategories, setLoadingCategories] = useState(true);
 
   const [formData, setFormData] = useState({
     amount: transaction?.amount ? Number(transaction.amount) : 0,
     description: transaction?.description || '',
-    type: transaction?.type || 'EXPENSE',
-    category: transaction?.category || 'OTHER',
+    type: (transaction?.type || 'EXPENSE') as TransactionType,
+    categoryId: transaction?.categoryId || '',
     date: transaction?.date
       ? new Date(transaction.date).toISOString().slice(0, 16)
       : new Date().toISOString().slice(0, 16),
   });
+
+  // Fetch categories when component mounts or type changes
+  useEffect(() => {
+    const fetchCategories = async () => {
+      setLoadingCategories(true);
+      try {
+        const response = await fetch(`/api/categories?type=${formData.type}`);
+        const data = await response.json();
+        setCategories(data.categories || []);
+
+        // If no category selected and categories available, select first one
+        if (!formData.categoryId && data.categories?.length > 0) {
+          setFormData((prev) => ({ ...prev, categoryId: data.categories[0].id }));
+        }
+      } catch (error) {
+        console.error('Failed to fetch categories:', error);
+      } finally {
+        setLoadingCategories(false);
+      }
+    };
+
+    fetchCategories();
+  }, [formData.type]);
 
   useEffect(() => {
     if (transaction) {
@@ -68,7 +92,7 @@ export default function TransactionForm({
         amount: Number(transaction.amount),
         description: transaction.description,
         type: transaction.type,
-        category: transaction.category,
+        categoryId: transaction.categoryId || '',
         date: new Date(transaction.date).toISOString().slice(0, 16),
       });
     }
@@ -84,7 +108,7 @@ export default function TransactionForm({
         amount: formData.amount,
         description: formData.description,
         type: formData.type as TransactionType,
-        category: formData.category as Category,
+        categoryId: formData.categoryId || null,
         date: new Date(formData.date).toISOString(),
       };
 
@@ -172,17 +196,23 @@ export default function TransactionForm({
             <Label htmlFor='category'>Category</Label>
             <Select
               id='category'
-              value={formData.category}
+              value={formData.categoryId}
               onChange={(e) =>
-                setFormData({ ...formData, category: e.target.value as Category })
+                setFormData({ ...formData, categoryId: e.target.value })
               }
-              disabled={isLoading}
+              disabled={isLoading || loadingCategories}
             >
-              {CATEGORIES.map((cat) => (
-                <option key={cat.value} value={cat.value}>
-                  {cat.label}
-                </option>
-              ))}
+              {loadingCategories ? (
+                <option value=''>Loading categories...</option>
+              ) : categories.length === 0 ? (
+                <option value=''>No categories available</option>
+              ) : (
+                categories.map((cat) => (
+                  <option key={cat.id} value={cat.id}>
+                    {cat.icon} {cat.name}
+                  </option>
+                ))
+              )}
             </Select>
           </div>
 

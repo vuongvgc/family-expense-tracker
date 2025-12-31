@@ -92,34 +92,28 @@ export default function RegisterPage() {
         </CardHeader>
 
         <CardContent>
-          <Tabs className='w-full'>
+          <Tabs
+            value={activeTab}
+            onValueChange={(value) => {
+              setActiveTab(value as TabType);
+              setError('');
+              setSuccess('');
+            }}
+            className='w-full'
+          >
             <TabsList className='grid w-full grid-cols-2 mb-6'>
-              <TabsTrigger
-                active={activeTab === 'create'}
-                onClick={() => {
-                  setActiveTab('create');
-                  setError('');
-                  setSuccess('');
-                }}
-              >
+              <TabsTrigger value='create'>
                 <Users className='w-4 h-4 mr-2' />
                 Create Family
               </TabsTrigger>
-              <TabsTrigger
-                active={activeTab === 'join'}
-                onClick={() => {
-                  setActiveTab('join');
-                  setError('');
-                  setSuccess('');
-                }}
-              >
+              <TabsTrigger value='join'>
                 <UserPlus className='w-4 h-4 mr-2' />
                 Join Family
               </TabsTrigger>
             </TabsList>
 
             {/* CREATE FAMILY TAB */}
-            <TabsContent className={activeTab === 'create' ? '' : 'hidden'}>
+            <TabsContent value='create'>
               <form onSubmit={handleSubmit} className='space-y-4'>
                 <div className='space-y-2'>
                   <Label htmlFor='create-name'>Your Name</Label>
@@ -207,7 +201,7 @@ export default function RegisterPage() {
             </TabsContent>
 
             {/* JOIN FAMILY TAB */}
-            <TabsContent className={activeTab === 'join' ? '' : 'hidden'}>
+            <TabsContent value='join'>
               <form onSubmit={handleSubmit} className='space-y-4'>
                 <div className='space-y-2'>
                   <Label htmlFor='join-name'>Your Name</Label>

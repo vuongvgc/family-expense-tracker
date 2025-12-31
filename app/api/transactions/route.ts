@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { auth } from '@/auth';
 import prisma from '@/lib/prisma';
 import { z } from 'zod';
-import { TransactionType, Category } from '@prisma/client';
+import { TransactionType } from '@prisma/client';
 import { TransactionFilterWhereClause } from '@/lib/types';
 
 // Validation schema for creating/updating transactions
@@ -10,7 +10,7 @@ const transactionSchema = z.object({
   amount: z.number().positive('Amount must be positive'),
   description: z.string().min(1, 'Description is required').max(200),
   type: z.nativeEnum(TransactionType),
-  category: z.nativeEnum(Category),
+  categoryId: z.string().optional().nullable(),
   date: z.string().datetime().optional(),
 });
 
@@ -61,7 +61,7 @@ export async function GET(request: Request) {
 
     // Add category filter
     if (categoryId) {
-      whereClause.category = categoryId as Category;
+      whereClause.categoryId = categoryId;
     }
 
     // Fetch transactions for the family, including creator info
@@ -72,6 +72,13 @@ export async function GET(request: Request) {
           select: {
             id: true,
             name: true,
+          },
+        },
+        category: {
+          select: {
+            id: true,
+            name: true,
+            icon: true,
           },
         },
       },
@@ -120,7 +127,7 @@ export async function POST(request: Request) {
         amount: validatedData.amount,
         description: validatedData.description,
         type: validatedData.type,
-        category: validatedData.category,
+        categoryId: validatedData.categoryId,
         date: validatedData.date ? new Date(validatedData.date) : new Date(),
         familyGroupId: session.user.familyGroupId,
         createdById: session.user.id,
@@ -130,6 +137,13 @@ export async function POST(request: Request) {
           select: {
             id: true,
             name: true,
+          },
+        },
+        category: {
+          select: {
+            id: true,
+            name: true,
+            icon: true,
           },
         },
       },

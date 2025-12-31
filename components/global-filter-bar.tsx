@@ -7,23 +7,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
 import { X, Calendar, Filter } from 'lucide-react';
-import { Category } from '@prisma/client';
 import { TimePeriod, TIME_PERIOD_LABELS, buildFilterQuery } from '@/lib/filters';
-import { format } from 'date-fns';
 
-const CATEGORY_OPTIONS = [
-  { value: '', label: 'All Categories' },
-  { value: 'FOOD', label: 'Food & Dining' },
-  { value: 'TRANSPORT', label: 'Transportation' },
-  { value: 'UTILITIES', label: 'Utilities' },
-  { value: 'HEALTHCARE', label: 'Healthcare' },
-  { value: 'EDUCATION', label: 'Education' },
-  { value: 'ENTERTAINMENT', label: 'Entertainment' },
-  { value: 'SHOPPING', label: 'Shopping' },
-  { value: 'SALARY', label: 'Salary' },
-  { value: 'INVESTMENT', label: 'Investment' },
-  { value: 'OTHER', label: 'Other' },
-];
+interface Category {
+  id: string;
+  name: string;
+  icon: string;
+  type: string;
+}
 
 export default function GlobalFilterBar() {
   const searchParams = useSearchParams();
@@ -40,6 +31,27 @@ export default function GlobalFilterBar() {
   );
   const [customEnd, setCustomEnd] = useState(searchParams.get('customEnd') || '');
   const [showCustomRange, setShowCustomRange] = useState(period === 'custom');
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [isLoadingCategories, setIsLoadingCategories] = useState(true);
+
+  // Fetch categories
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch('/api/categories');
+        if (response.ok) {
+          const data = await response.json();
+          setCategories(data.categories || []);
+        }
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      } finally {
+        setIsLoadingCategories(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   // Update URL when filters change
   const updateURL = (updates: {
@@ -138,11 +150,13 @@ export default function GlobalFilterBar() {
                 id='category'
                 value={categoryId}
                 onChange={(e) => handleCategoryChange(e.target.value)}
+                disabled={isLoadingCategories}
                 className='flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50'
               >
-                {CATEGORY_OPTIONS.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
+                <option value=''>All Categories</option>
+                {categories.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.icon} {category.name}
                   </option>
                 ))}
               </select>
@@ -216,7 +230,8 @@ export default function GlobalFilterBar() {
                 <>
                   <span>•</span>
                   <span className='font-medium'>
-                    {CATEGORY_OPTIONS.find((c) => c.value === categoryId)?.label}
+                    {categories.find((c) => c.id === categoryId)?.icon}{' '}
+                    {categories.find((c) => c.id === categoryId)?.name}
                   </span>
                 </>
               )}

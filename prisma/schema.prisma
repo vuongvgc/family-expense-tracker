@@ -22,82 +22,82 @@ enum TransactionType {
     EXPENSE
 }
 
-// Enum for expense categories (expandable)
-enum Category {
-    FOOD
-    TRANSPORT
-    UTILITIES
-    HEALTHCARE
-    EDUCATION
-    ENTERTAINMENT
-    SHOPPING
-    SALARY
-    INVESTMENT
-    OTHER
-}
-
 // FamilyGroup Model
 // Represents a household/family unit that shares expense tracking
 model FamilyGroup {
     id         String   @id @default(cuid())
-    name       String // e.g., "The Smith Family"
-    inviteCode String   @unique @default(cuid()) // Unique code for family members to join
+    name       String
+    inviteCode String   @unique @default(cuid())
     createdAt  DateTime @default(now())
     updatedAt  DateTime @updatedAt
 
-    // Relations
     members      User[]        @relation("FamilyMembers")
     transactions Transaction[] @relation("FamilyTransactions")
+    categories   Category[]    @relation("FamilyCategories")
 
     @@index([inviteCode])
 }
 
 // User Model
-// Represents individual family members with authentication
 model User {
     id            String    @id @default(cuid())
     name          String
     email         String    @unique
-    password      String // Hashed password (bcrypt)
+    password      String
     role          UserRole  @default(MEMBER)
     emailVerified DateTime?
-    image         String? // Optional profile picture
+    image         String?
     createdAt     DateTime  @default(now())
     updatedAt     DateTime  @updatedAt
 
-    // Family relationship (One user belongs to ONE family)
     familyGroupId String
     familyGroup   FamilyGroup @relation("FamilyMembers", fields: [familyGroupId], references: [id], onDelete: Cascade)
 
-    // Transactions created by this user
     transactions Transaction[] @relation("UserTransactions")
 
     @@index([email])
     @@index([familyGroupId])
 }
 
+// Category Model
+model Category {
+    id        String          @id @default(cuid())
+    name      String
+    type      TransactionType
+    icon      String
+    createdAt DateTime        @default(now())
+    updatedAt DateTime        @updatedAt
+
+    familyGroupId String
+    familyGroup   FamilyGroup @relation("FamilyCategories", fields: [familyGroupId], references: [id], onDelete: Cascade)
+
+    transactions Transaction[] @relation("CategoryTransactions")
+
+    @@index([familyGroupId])
+    @@index([type])
+}
+
 // Transaction Model
-// Represents individual income/expense entries
 model Transaction {
     id          String          @id @default(cuid())
-    amount      Decimal         @db.Decimal(15, 0) // Monetary amount in VND (no decimals)
+    amount      Decimal         @db.Decimal(15, 0)
     description String
     type        TransactionType
-    category    Category
-    date        DateTime        @default(now()) // Transaction date
+    date        DateTime        @default(now())
     createdAt   DateTime        @default(now())
     updatedAt   DateTime        @updatedAt
 
-    // Family association (which family this transaction belongs to)
+    categoryId String?
+    category   Category? @relation("CategoryTransactions", fields: [categoryId], references: [id], onDelete: SetNull)
+
     familyGroupId String
     familyGroup   FamilyGroup @relation("FamilyTransactions", fields: [familyGroupId], references: [id], onDelete: Cascade)
 
-    // Creator tracking (who made this transaction)
     createdById String
     createdBy   User   @relation("UserTransactions", fields: [createdById], references: [id], onDelete: Cascade)
 
     @@index([familyGroupId, date])
     @@index([createdById])
     @@index([type])
-    @@index([category])
+    @@index([categoryId])
 }
