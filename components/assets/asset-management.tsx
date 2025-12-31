@@ -67,6 +67,8 @@ import {
 } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
+import { AnimatedCard } from '@/components/ui/animated-card';
+import { AnimatedNumber } from '@/components/ui/animated-number';
 
 interface AssetManagementProps {
   initialAssets: Asset[];
@@ -290,11 +292,14 @@ export default function AssetManagement({
     <div className='space-y-6'>
       {/* Net Worth Header */}
       <div className='grid gap-4 md:grid-cols-3'>
-        <Card className='md:col-span-1 bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20'>
+        <AnimatedCard
+          delay={0}
+          className='md:col-span-1 bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20'
+        >
           <CardHeader className='pb-3'>
             <CardDescription>Tài Sản Ròng</CardDescription>
             <CardTitle className='text-3xl font-bold text-primary'>
-              {formatCurrency(summary.netWorth)}
+              <AnimatedNumber value={summary.netWorth} />
             </CardTitle>
           </CardHeader>
           <CardContent className='text-sm text-muted-foreground'>
@@ -310,36 +315,36 @@ export default function AssetManagement({
               </p>
             )}
           </CardContent>
-        </Card>
+        </AnimatedCard>
 
-        <Card>
+        <AnimatedCard delay={0.1}>
           <CardHeader className='pb-3'>
             <CardDescription>Tổng Tài Sản</CardDescription>
             <CardTitle className='text-2xl text-green-600'>
-              +{formatCurrency(summary.totalAssets)}
+              +<AnimatedNumber value={summary.totalAssets} />
             </CardTitle>
           </CardHeader>
           <CardContent className='text-sm text-muted-foreground'>
             {summary.assetsCount} tài sản
           </CardContent>
-        </Card>
+        </AnimatedCard>
 
-        <Card>
+        <AnimatedCard delay={0.2}>
           <CardHeader className='pb-3'>
             <CardDescription>Tổng Khoản Nợ</CardDescription>
             <CardTitle className='text-2xl text-red-600'>
-              -{formatCurrency(summary.totalDebts)}
+              -<AnimatedNumber value={summary.totalDebts} />
             </CardTitle>
           </CardHeader>
           <CardContent className='text-sm text-muted-foreground'>
             {summary.debtsCount} khoản nợ
           </CardContent>
-        </Card>
+        </AnimatedCard>
       </div>
 
       {/* Asset Allocation Chart */}
       {assets.length > 0 && (
-        <Card>
+        <AnimatedCard delay={0.3}>
           <CardHeader>
             <CardTitle>Phân Bổ Tài Sản</CardTitle>
             <CardDescription>Phân bố tài sản của bạn theo loại</CardDescription>
@@ -371,11 +376,11 @@ export default function AssetManagement({
               </PieChart>
             </ResponsiveContainer>
           </CardContent>
-        </Card>
+        </AnimatedCard>
       )}
 
       {/* Assets List */}
-      <Card>
+      <AnimatedCard delay={0.4}>
         <CardHeader>
           <div className='flex items-center justify-between'>
             <div>
@@ -528,7 +533,7 @@ export default function AssetManagement({
             </div>
           )}
         </CardContent>
-      </Card>
+      </AnimatedCard>
 
       {/* Edit Asset Dialog */}
       <Dialog

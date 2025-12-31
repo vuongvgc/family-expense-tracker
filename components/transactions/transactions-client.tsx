@@ -42,6 +42,8 @@ import {
   endOfYear,
   subMonths,
 } from 'date-fns';
+import { AnimatedCard } from '@/components/ui/animated-card';
+import { AnimatedNumber } from '@/components/ui/animated-number';
 
 interface Transaction {
   id: string;
@@ -204,7 +206,7 @@ export default function TransactionsClient({
       </div>
 
       {/* Filters */}
-      <Card className='mb-6'>
+      <AnimatedCard delay={0} className='mb-6'>
         <CardHeader>
           <CardTitle>Bộ Lọc</CardTitle>
           <CardDescription>
@@ -263,35 +265,35 @@ export default function TransactionsClient({
             </div>
           </div>
         </CardContent>
-      </Card>
+      </AnimatedCard>
 
       {/* Summary Bar */}
       <div className='grid gap-4 md:grid-cols-3 mb-6'>
-        <Card>
+        <AnimatedCard delay={0.1}>
           <CardHeader className='pb-3'>
             <CardDescription className='flex items-center gap-2'>
               <TrendingUp className='h-4 w-4 text-green-600' />
               Tổng Thu Nhập
             </CardDescription>
             <CardTitle className='text-2xl font-bold text-green-600'>
-              {formatCurrency(summary.totalIncome)}
+              <AnimatedNumber value={summary.totalIncome} />
             </CardTitle>
           </CardHeader>
-        </Card>
+        </AnimatedCard>
 
-        <Card>
+        <AnimatedCard delay={0.2}>
           <CardHeader className='pb-3'>
             <CardDescription className='flex items-center gap-2'>
               <TrendingDown className='h-4 w-4 text-red-600' />
               Tổng Chi Tiêu
             </CardDescription>
             <CardTitle className='text-2xl font-bold text-red-600'>
-              {formatCurrency(summary.totalExpense)}
+              <AnimatedNumber value={summary.totalExpense} />
             </CardTitle>
           </CardHeader>
-        </Card>
+        </AnimatedCard>
 
-        <Card>
+        <AnimatedCard delay={0.3}>
           <CardHeader className='pb-3'>
             <CardDescription className='flex items-center gap-2'>
               <DollarSign className='h-4 w-4' />
@@ -303,14 +305,14 @@ export default function TransactionsClient({
               }`}
             >
               {summary.net >= 0 ? '+' : ''}
-              {formatCurrency(summary.net)}
+              <AnimatedNumber value={summary.net} />
             </CardTitle>
           </CardHeader>
-        </Card>
+        </AnimatedCard>
       </div>
 
       {/* Transactions Table */}
-      <Card>
+      <AnimatedCard delay={0.4}>
         <CardHeader>
           <div className='flex items-center justify-between'>
             <div>
@@ -361,7 +363,7 @@ export default function TransactionsClient({
             </>
           )}
         </CardContent>
-      </Card>
+      </AnimatedCard>
     </div>
   );
 }

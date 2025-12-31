@@ -51,6 +51,9 @@ import {
   type DebtSummary,
 } from '@/actions/debt';
 import { useRouter } from 'next/navigation';
+import { AnimatedCard } from '@/components/ui/animated-card';
+import { AnimatedNumber } from '@/components/ui/animated-number';
+import { AnimatedProgress } from '@/components/ui/animated-progress';
 
 interface DebtManagementProps {
   initialSummary: DebtSummary;
@@ -217,19 +220,19 @@ export function DebtManagement({
 
       {/* Summary Cards */}
       <div className='grid grid-cols-1 md:grid-cols-4 gap-4'>
-        <Card>
+        <AnimatedCard delay={0}>
           <CardHeader className='pb-3'>
             <CardDescription>Tổng Nợ Chưa Trả</CardDescription>
             <CardTitle className='text-2xl text-red-600'>
-              {formatCurrency(initialSummary.totalOutstanding)}
+              <AnimatedNumber value={initialSummary.totalOutstanding} />
             </CardTitle>
           </CardHeader>
           <CardContent>
             <p className='text-xs text-muted-foreground'>Số tiền còn phải trả</p>
           </CardContent>
-        </Card>
+        </AnimatedCard>
 
-        <Card>
+        <AnimatedCard delay={0.1}>
           <CardHeader className='pb-3'>
             <CardDescription>Tổng Số Khoản Nợ</CardDescription>
             <CardTitle className='text-2xl text-gray-600'>
@@ -239,9 +242,9 @@ export function DebtManagement({
           <CardContent>
             <p className='text-xs text-muted-foreground'>Tất cả bản ghi nợ</p>
           </CardContent>
-        </Card>
+        </AnimatedCard>
 
-        <Card>
+        <AnimatedCard delay={0.2}>
           <CardHeader className='pb-3'>
             <CardDescription>Khoản Nợ Hoạt Động</CardDescription>
             <CardTitle className='text-2xl text-orange-600'>
@@ -251,9 +254,9 @@ export function DebtManagement({
           <CardContent>
             <p className='text-xs text-muted-foreground'>Đang nợ</p>
           </CardContent>
-        </Card>
+        </AnimatedCard>
 
-        <Card>
+        <AnimatedCard delay={0.3}>
           <CardHeader className='pb-3'>
             <CardDescription>Đã Thanh Toán</CardDescription>
             <CardTitle className='text-2xl text-green-600'>
@@ -263,28 +266,32 @@ export function DebtManagement({
           <CardContent>
             <p className='text-xs text-muted-foreground'>Đã trả hết</p>
           </CardContent>
-        </Card>
+        </AnimatedCard>
       </div>
 
       {/* Debt Cards */}
       {initialDebts.length === 0 ? (
-        <Card>
+        <AnimatedCard delay={0.4}>
           <CardContent className='py-12 text-center text-muted-foreground'>
             <Wallet className='h-12 w-12 mx-auto mb-4 opacity-50' />
             <p>
               Chưa ghi nhận khoản nợ nào. Nhấp "Thêm Khoản Nợ" để bắt đầu theo dõi.
             </p>
           </CardContent>
-        </Card>
+        </AnimatedCard>
       ) : (
         <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-          {initialDebts.map((debt) => {
+          {initialDebts.map((debt, index) => {
             const paidAmount = debt.totalAmount - debt.remainingAmount;
             const progressPercentage = (paidAmount / debt.totalAmount) * 100;
             const isPaid = debt.status === 'PAID';
 
             return (
-              <Card key={debt.id} className={isPaid ? 'bg-green-50' : ''}>
+              <AnimatedCard
+                key={debt.id}
+                delay={0.4 + index * 0.05}
+                className={isPaid ? 'bg-green-50' : ''}
+              >
                 <CardHeader>
                   <div className='flex items-start justify-between'>
                     <div className='flex-1'>
@@ -342,11 +349,9 @@ export function DebtManagement({
                         {formatCurrency(debt.totalAmount)}
                       </span>
                     </div>
-                    <Progress
+                    <AnimatedProgress
                       value={progressPercentage}
-                      className={`h-2 ${
-                        isPaid ? '[&>div]:bg-green-500' : '[&>div]:bg-blue-500'
-                      }`}
+                      indicatorClassName={isPaid ? 'bg-green-500' : 'bg-blue-500'}
                     />
                   </div>
 
@@ -402,7 +407,7 @@ export function DebtManagement({
                     </div>
                   )}
                 </CardContent>
-              </Card>
+              </AnimatedCard>
             );
           })}
         </div>

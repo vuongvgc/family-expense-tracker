@@ -1,6 +1,7 @@
 # Credit Card Debt Feature
 
 ## Tổng Quan
+
 Tính năng tự động theo dõi nợ thẻ tín dụng khi người dùng tạo giao dịch chi tiêu bằng thẻ tín dụng.
 
 ## Chi Tiết Implementation
@@ -8,6 +9,7 @@ Tính năng tự động theo dõi nợ thẻ tín dụng khi người dùng t�
 ### 1. Database Schema
 
 #### Enum PaymentMethod (prisma/schema.prisma)
+
 ```prisma
 enum PaymentMethod {
     CASH
@@ -19,7 +21,9 @@ enum PaymentMethod {
 ```
 
 #### Transaction Model
+
 Thêm field `paymentMethod`:
+
 ```prisma
 model Transaction {
     paymentMethod PaymentMethod @default(CASH)
@@ -69,6 +73,7 @@ await tx.debt.update({
 ### 3. Transaction Wrapper
 
 Tất cả logic được wrap trong `prisma.$transaction()` để đảm bảo:
+
 - Nếu tạo transaction thất bại → debt không tăng
 - Nếu update debt thất bại → transaction không được tạo
 - **Atomicity**: Cả hai operations thành công hoặc cả hai fail
@@ -78,6 +83,7 @@ Tất cả logic được wrap trong `prisma.$transaction()` để đảm bảo:
 **File:** `actions/debt.ts` (existing)
 
 Khi user "Make Payment" cho debt này:
+
 ```typescript
 // Payment được tạo thông qua makeDebtPayment action
 await prisma.debt.update({
@@ -96,6 +102,7 @@ await prisma.debt.update({
 **File:** `actions/dashboard.ts`
 
 Function `getActiveDebtsSummary()` tự động hiển thị "Credit Card Debt":
+
 ```typescript
 const debts = await prisma.debt.findMany({
   where: {
@@ -110,6 +117,7 @@ const debts = await prisma.debt.findMany({
 ```
 
 Debt này sẽ xuất hiện trong dashboard summary với:
+
 - Title: "Credit Card Debt"
 - Remaining Amount: Tổng nợ hiện tại
 - Progress: % đã trả (nếu có payments)
@@ -117,9 +125,11 @@ Debt này sẽ xuất hiện trong dashboard summary với:
 ### 6. UI Components
 
 #### Transaction Form
+
 **File:** `components/transaction-form.tsx`
 
 Thêm Payment Method selector:
+
 ```tsx
 <Select value={formData.paymentMethod}>
   <SelectItem value='CASH'>💵 Tiền Mặt</SelectItem>
@@ -155,6 +165,7 @@ Dashboard tự động hiển thị debt này
 ## Use Cases
 
 ### Case 1: First Credit Card Transaction
+
 ```
 User: Tạo giao dịch 500,000 VND - Mua hàng online - CREDIT_CARD
 System:
@@ -164,6 +175,7 @@ System:
 ```
 
 ### Case 2: Subsequent Transactions
+
 ```
 User: Tạo giao dịch 300,000 VND - Đi ăn - CREDIT_CARD
 System:
@@ -174,6 +186,7 @@ System:
 ```
 
 ### Case 3: Payment
+
 ```
 User: Make Payment 500,000 VND cho "Credit Card Debt"
 System:
@@ -183,6 +196,7 @@ System:
 ```
 
 ### Case 4: Full Repayment
+
 ```
 User: Make Payment 300,000 VND (trả hết)
 System:

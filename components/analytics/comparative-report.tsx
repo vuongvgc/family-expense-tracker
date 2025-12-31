@@ -28,6 +28,8 @@ import {
 } from 'recharts';
 import { formatCurrency } from '@/lib/utils';
 import { TrendingDown, TrendingUp } from 'lucide-react';
+import { AnimatedCard } from '@/components/ui/animated-card';
+import { AnimatedNumber } from '@/components/ui/animated-number';
 
 interface ComparativeSummary {
   targetTotal: number;
@@ -139,7 +141,7 @@ export function ComparativeReport({ initialData }: ComparativeReportProps) {
   return (
     <div className='space-y-6'>
       {/* Filters */}
-      <Card>
+      <AnimatedCard delay={0}>
         <CardHeader>
           <CardTitle>Chọn Giai Đoạn</CardTitle>
           <CardDescription>
@@ -239,15 +241,15 @@ export function ComparativeReport({ initialData }: ComparativeReportProps) {
             </div>
           </div>
         </CardContent>
-      </Card>
+      </AnimatedCard>
 
       {/* KPI Cards */}
       <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
-        <Card>
+        <AnimatedCard delay={0.1}>
           <CardHeader className='pb-3'>
             <CardDescription>Tổng Giai Đoạn Đích</CardDescription>
             <CardTitle className='text-2xl text-blue-600'>
-              {formatCurrency(summary.targetTotal)}
+              <AnimatedNumber value={summary.targetTotal} />
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -255,13 +257,13 @@ export function ComparativeReport({ initialData }: ComparativeReportProps) {
               {MONTHS.find((m) => m.value === targetMonth)?.label} {targetYear}
             </p>
           </CardContent>
-        </Card>
+        </AnimatedCard>
 
-        <Card>
+        <AnimatedCard delay={0.2}>
           <CardHeader className='pb-3'>
             <CardDescription>Tổng Giai Đoạn Tham Chiếu</CardDescription>
             <CardTitle className='text-2xl text-gray-600'>
-              {formatCurrency(summary.refTotal)}
+              <AnimatedNumber value={summary.refTotal} />
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -269,9 +271,9 @@ export function ComparativeReport({ initialData }: ComparativeReportProps) {
               {MONTHS.find((m) => m.value === refMonth)?.label} {refYear}
             </p>
           </CardContent>
-        </Card>
+        </AnimatedCard>
 
-        <Card>
+        <AnimatedCard delay={0.3}>
           <CardHeader className='pb-3'>
             <CardDescription>Chênh Lệch Ròng</CardDescription>
             <CardTitle
@@ -284,7 +286,7 @@ export function ComparativeReport({ initialData }: ComparativeReportProps) {
               ) : summary.diff < 0 ? (
                 <TrendingDown className='h-5 w-5' />
               ) : null}
-              {formatCurrency(Math.abs(summary.diff))}
+              <AnimatedNumber value={Math.abs(summary.diff)} />
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -297,11 +299,11 @@ export function ComparativeReport({ initialData }: ComparativeReportProps) {
               {summary.percentChange.toFixed(1)}% so với tham chiếu
             </p>
           </CardContent>
-        </Card>
+        </AnimatedCard>
       </div>
 
-      {/* Chart */}
-      <Card>
+      {/* Bar Chart */}
+      <AnimatedCard delay={0.4}>
         <CardHeader>
           <CardTitle>So Sánh Theo Danh Mục</CardTitle>
           <CardDescription>
@@ -343,11 +345,11 @@ export function ComparativeReport({ initialData }: ComparativeReportProps) {
             </div>
           )}
         </CardContent>
-      </Card>
+      </AnimatedCard>
 
       {/* Detailed Table */}
       {chartData.length > 0 && (
-        <Card>
+        <AnimatedCard delay={0.5}>
           <CardHeader>
             <CardTitle>Phân Tích Chi Tiết</CardTitle>
             <CardDescription>So sánh từng danh mục với chênh lệch</CardDescription>
@@ -415,7 +417,7 @@ export function ComparativeReport({ initialData }: ComparativeReportProps) {
               </table>
             </div>
           </CardContent>
-        </Card>
+        </AnimatedCard>
       )}
     </div>
   );

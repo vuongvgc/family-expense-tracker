@@ -36,6 +36,7 @@ import { useToast } from '@/hooks/use-toast';
 import { createCategory, updateCategory, deleteCategory } from '@/actions/category';
 import { Plus, Pencil, Trash2, Loader2 } from 'lucide-react';
 import { TransactionType } from '@prisma/client';
+import { AnimatedCard } from '@/components/ui/animated-card';
 
 interface Category {
   id: string;
@@ -69,8 +70,9 @@ export default function CategoriesPageClient({
   const handleCreateCategory = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    const formData = new FormData(e.currentTarget);
+
     startTransition(async () => {
-      const formData = new FormData(e.currentTarget);
       const result = await createCategory(formData);
 
       if (result?.error) {
@@ -84,8 +86,8 @@ export default function CategoriesPageClient({
           title: 'Thành Công',
           description: 'Tạo danh mục thành công',
         });
-        setIsCreateDialogOpen(false);
         e.currentTarget.reset();
+        setIsCreateDialogOpen(false);
       }
     });
   };
@@ -141,8 +143,8 @@ export default function CategoriesPageClient({
 
   const CategoryList = ({ categories }: { categories: Category[] }) => (
     <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'>
-      {categories.map((category) => (
-        <Card key={category.id} className='relative'>
+      {categories.map((category, index) => (
+        <AnimatedCard key={category.id} delay={index * 0.05} className='relative'>
           <CardContent className='pt-6'>
             <div className='flex items-start justify-between'>
               <div className='flex items-center gap-3 flex-1'>
@@ -209,7 +211,7 @@ export default function CategoriesPageClient({
               </div>
             </div>
           </CardContent>
-        </Card>
+        </AnimatedCard>
       ))}
 
       {categories.length === 0 && (

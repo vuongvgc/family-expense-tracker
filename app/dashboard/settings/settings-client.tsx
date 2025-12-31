@@ -35,6 +35,7 @@ import { useToast } from '@/hooks/use-toast';
 import { updateProfile, removeMember, leaveFamily } from '@/actions/settings';
 import { Copy, Trash2, Loader2, LogOut } from 'lucide-react';
 import { UserRole } from '@prisma/client';
+import { AnimatedCard } from '@/components/ui/animated-card';
 
 interface Member {
   id: string;
@@ -158,7 +159,7 @@ export default function SettingsPageClient({
   return (
     <div className='container mx-auto p-6 max-w-5xl space-y-6'>
       {/* Personal Profile Card */}
-      <Card>
+      <AnimatedCard delay={0}>
         <CardHeader>
           <CardTitle>Hồ Sơ Của Tôi</CardTitle>
           <CardDescription>
@@ -228,10 +229,10 @@ export default function SettingsPageClient({
             </Button>
           </form>
         </CardContent>
-      </Card>
+      </AnimatedCard>
 
       {/* Family Management Card */}
-      <Card>
+      <AnimatedCard delay={0.1}>
         <CardHeader>
           <CardTitle>Nhóm Gia Đình: {familyGroup.name}</CardTitle>
           <CardDescription>
@@ -404,7 +405,7 @@ export default function SettingsPageClient({
             </AlertDialog>
           </div>
         </CardContent>
-      </Card>
+      </AnimatedCard>
     </div>
   );
 }

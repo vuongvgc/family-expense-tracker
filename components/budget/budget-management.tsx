@@ -38,6 +38,9 @@ import {
   type BudgetCategoryData,
   type BudgetSummary,
 } from '@/actions/budget-actions';
+import { AnimatedCard } from '@/components/ui/animated-card';
+import { AnimatedNumber } from '@/components/ui/animated-number';
+import { AnimatedProgress } from '@/components/ui/animated-progress';
 
 interface BudgetManagementProps {
   initialData: {
@@ -231,11 +234,11 @@ export function BudgetManagement({ initialData }: BudgetManagementProps) {
 
       {/* Summary KPI Cards */}
       <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
-        <Card>
+        <AnimatedCard delay={0}>
           <CardHeader className='pb-3'>
             <CardDescription>Tổng Ngân Sách</CardDescription>
             <CardTitle className='text-2xl text-blue-600'>
-              {formatCurrency(summary.totalBudget)}
+              <AnimatedNumber value={summary.totalBudget} />
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -243,13 +246,13 @@ export function BudgetManagement({ initialData }: BudgetManagementProps) {
               Tổng giới hạn chi tiêu dự kiến
             </p>
           </CardContent>
-        </Card>
+        </AnimatedCard>
 
-        <Card>
+        <AnimatedCard delay={0.1}>
           <CardHeader className='pb-3'>
             <CardDescription>Tổng Đã Chi</CardDescription>
             <CardTitle className='text-2xl text-gray-600'>
-              {formatCurrency(summary.totalSpent)}
+              <AnimatedNumber value={summary.totalSpent} />
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -261,9 +264,9 @@ export function BudgetManagement({ initialData }: BudgetManagementProps) {
                 : 'Chưa đặt ngân sách'}
             </p>
           </CardContent>
-        </Card>
+        </AnimatedCard>
 
-        <Card>
+        <AnimatedCard delay={0.2}>
           <CardHeader className='pb-3'>
             <CardDescription>Còn Lại</CardDescription>
             <CardTitle
@@ -276,7 +279,7 @@ export function BudgetManagement({ initialData }: BudgetManagementProps) {
               ) : (
                 <Wallet className='h-5 w-5' />
               )}
-              {formatCurrency(Math.abs(summary.remaining))}
+              <AnimatedNumber value={Math.abs(summary.remaining)} />
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -288,11 +291,11 @@ export function BudgetManagement({ initialData }: BudgetManagementProps) {
               {summary.remaining < 0 ? 'Vượt ngân sách' : 'Dưới ngân sách'}
             </p>
           </CardContent>
-        </Card>
+        </AnimatedCard>
       </div>
 
       {/* Budget Grid */}
-      <Card>
+      <AnimatedCard delay={0.3}>
         <CardHeader>
           <CardTitle>Ngân Sách Theo Danh Mục</CardTitle>
           <CardDescription>
@@ -306,7 +309,7 @@ export function BudgetManagement({ initialData }: BudgetManagementProps) {
             </div>
           ) : (
             <div className='space-y-6'>
-              {categories.map((category) => {
+              {categories.map((category, index) => {
                 const percentage =
                   category.limit > 0 ? (category.spent / category.limit) * 100 : 0;
                 const isOverBudget =
@@ -318,8 +321,9 @@ export function BudgetManagement({ initialData }: BudgetManagementProps) {
                   : category.limit;
 
                 return (
-                  <div
+                  <AnimatedCard
                     key={category.categoryId}
+                    delay={0.4 + index * 0.05}
                     className='border rounded-lg p-4 space-y-3'
                   >
                     {/* Category Header */}
@@ -394,25 +398,25 @@ export function BudgetManagement({ initialData }: BudgetManagementProps) {
                             </span>
                           )}
                         </div>
-                        <Progress
+                        <AnimatedProgress
                           value={Math.min(percentage, 100)}
-                          className={`h-2 ${
+                          indicatorClassName={
                             isOverBudget
-                              ? '[&>div]:bg-red-500'
+                              ? 'bg-red-500'
                               : percentage >= 80
-                              ? '[&>div]:bg-yellow-500'
-                              : '[&>div]:bg-green-500'
-                          }`}
+                              ? 'bg-yellow-500'
+                              : 'bg-green-500'
+                          }
                         />
                       </div>
                     )}
-                  </div>
+                  </AnimatedCard>
                 );
               })}
             </div>
           )}
         </CardContent>
-      </Card>
+      </AnimatedCard>
 
       {/* Clone Confirmation Dialog */}
       <AlertDialog open={showCloneDialog} onOpenChange={setShowCloneDialog}>

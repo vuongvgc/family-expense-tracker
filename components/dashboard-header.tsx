@@ -41,6 +41,7 @@ import { useState } from 'react';
 interface DashboardHeaderProps {
   userName: string;
   familyGroupId: string;
+  familyGroupName: string;
   role: string;
 }
 
@@ -93,6 +94,7 @@ const userMenuItems = [
 export default function DashboardHeader({
   userName,
   familyGroupId,
+  familyGroupName,
   role,
 }: DashboardHeaderProps) {
   const pathname = usePathname();
@@ -121,7 +123,7 @@ export default function DashboardHeader({
               <Wallet className='h-5 w-5 text-primary' />
             </div>
             <div>
-              <h1 className='text-lg font-bold text-gray-900'>Family Exp</h1>
+              <h1 className='text-lg font-bold text-gray-900'>{familyGroupName}</h1>
               {role === 'ADMIN' && (
                 <span className='hidden lg:inline text-[10px] px-1.5 py-0.5 bg-primary/10 text-primary rounded font-medium'>
                   Admin

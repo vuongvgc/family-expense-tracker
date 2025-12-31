@@ -37,7 +37,7 @@ export default function AddTransactionModal() {
   );
   const router = useRouter();
 
-  // Listen for edit transaction events
+  // Listen for edit transaction events and open modal events
   useEffect(() => {
     const handleEditTransaction = (event: Event) => {
       const customEvent = event as CustomEvent<Transaction>;
@@ -45,9 +45,17 @@ export default function AddTransactionModal() {
       setOpen(true);
     };
 
+    const handleOpenModal = () => {
+      setEditingTransaction(null);
+      setOpen(true);
+    };
+
     window.addEventListener('editTransaction', handleEditTransaction);
+    window.addEventListener('openTransactionModal', handleOpenModal);
+
     return () => {
       window.removeEventListener('editTransaction', handleEditTransaction);
+      window.removeEventListener('openTransactionModal', handleOpenModal);
     };
   }, []);
 
