@@ -34,6 +34,7 @@ model FamilyGroup {
     members      User[]        @relation("FamilyMembers")
     transactions Transaction[] @relation("FamilyTransactions")
     categories   Category[]    @relation("FamilyCategories")
+    budgets      Budget[]      @relation("FamilyBudgets")
 
     @@index([inviteCode])
 }
@@ -72,6 +73,7 @@ model Category {
     familyGroup   FamilyGroup @relation("FamilyCategories", fields: [familyGroupId], references: [id], onDelete: Cascade)
 
     transactions Transaction[] @relation("CategoryTransactions")
+    budgets      Budget[]      @relation("CategoryBudgets")
 
     @@index([familyGroupId])
     @@index([type])
@@ -99,5 +101,27 @@ model Transaction {
     @@index([familyGroupId, date])
     @@index([createdById])
     @@index([type])
+    @@index([categoryId])
+}
+
+// Budget Model
+// Stores monthly spending limits per category
+model Budget {
+    id     String  @id @default(cuid())
+    amount Decimal @db.Decimal(15, 0)
+    month  Int // 1-12
+    year   Int
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    categoryId String
+    category   Category @relation("CategoryBudgets", fields: [categoryId], references: [id], onDelete: Cascade)
+
+    familyGroupId String
+    familyGroup   FamilyGroup @relation("FamilyBudgets", fields: [familyGroupId], references: [id], onDelete: Cascade)
+
+    @@unique([familyGroupId, categoryId, month, year])
+    @@index([familyGroupId])
     @@index([categoryId])
 }
