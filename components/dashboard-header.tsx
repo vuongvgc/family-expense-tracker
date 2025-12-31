@@ -9,6 +9,7 @@ import {
   Settings,
   LayoutDashboard,
   FolderKanban,
+  BarChart3,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -25,6 +26,11 @@ const navItems = [
     href: '/dashboard',
     label: 'Dashboard',
     icon: LayoutDashboard,
+  },
+  {
+    href: '/dashboard/analytics',
+    label: 'Analytics',
+    icon: BarChart3,
   },
   {
     href: '/dashboard/categories',

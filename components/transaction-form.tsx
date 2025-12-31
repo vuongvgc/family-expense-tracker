@@ -5,7 +5,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { MoneyInput } from '@/components/ui/money-input';
 import { Label } from '@/components/ui/label';
-import { Select } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import {
   Card,
@@ -177,18 +183,22 @@ export default function TransactionForm({
         <div className='space-y-2'>
           <Label htmlFor='type'>Type</Label>
           <Select
-            id='type'
             value={formData.type}
-            onChange={(e) =>
+            onValueChange={(value) =>
               setFormData({
                 ...formData,
-                type: e.target.value as TransactionType,
+                type: value as TransactionType,
               })
             }
             disabled={isLoading}
           >
-            <option value='EXPENSE'>Expense</option>
-            <option value='INCOME'>Income</option>
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value='EXPENSE'>Expense</SelectItem>
+              <SelectItem value='INCOME'>Income</SelectItem>
+            </SelectContent>
           </Select>
         </div>
 
@@ -206,22 +216,34 @@ export default function TransactionForm({
       <div className='space-y-2'>
         <Label htmlFor='category'>Category</Label>
         <Select
-          id='category'
           value={formData.categoryId}
-          onChange={(e) => setFormData({ ...formData, categoryId: e.target.value })}
+          onValueChange={(value) => setFormData({ ...formData, categoryId: value })}
           disabled={isLoading || loadingCategories}
         >
-          {loadingCategories ? (
-            <option value=''>Loading categories...</option>
-          ) : categories.length === 0 ? (
-            <option value=''>No categories available</option>
-          ) : (
-            categories.map((cat) => (
-              <option key={cat.id} value={cat.id}>
-                {cat.icon} {cat.name}
-              </option>
-            ))
-          )}
+          <SelectTrigger>
+            <SelectValue
+              placeholder={
+                loadingCategories ? 'Loading categories...' : 'Select category'
+              }
+            />
+          </SelectTrigger>
+          <SelectContent>
+            {loadingCategories ? (
+              <SelectItem value='loading' disabled>
+                Loading categories...
+              </SelectItem>
+            ) : categories.length === 0 ? (
+              <SelectItem value='empty' disabled>
+                No categories available
+              </SelectItem>
+            ) : (
+              categories.map((cat) => (
+                <SelectItem key={cat.id} value={cat.id}>
+                  {cat.icon} {cat.name}
+                </SelectItem>
+              ))
+            )}
+          </SelectContent>
         </Select>
       </div>
 
