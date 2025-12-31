@@ -59,11 +59,27 @@ export function calculateDateRange(
         // Create new Date objects with proper time boundaries
         const start = new Date(customStart);
         const end = new Date(customEnd);
-        
+
         // Return dates with proper time boundaries
         return {
-          startDate: new Date(start.getFullYear(), start.getMonth(), start.getDate(), 0, 0, 0, 0),
-          endDate: new Date(end.getFullYear(), end.getMonth(), end.getDate(), 23, 59, 59, 999),
+          startDate: new Date(
+            start.getFullYear(),
+            start.getMonth(),
+            start.getDate(),
+            0,
+            0,
+            0,
+            0
+          ),
+          endDate: new Date(
+            end.getFullYear(),
+            end.getMonth(),
+            end.getDate(),
+            23,
+            59,
+            59,
+            999
+          ),
         };
       }
       // Fallback to this month if custom dates are invalid
