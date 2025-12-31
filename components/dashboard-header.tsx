@@ -30,6 +30,7 @@ import {
   User,
   ChevronDown,
   Users,
+  TrendingUp,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -62,6 +63,11 @@ const mainNavItems = [
     href: '/dashboard/debts',
     label: 'Debts',
     icon: CreditCard,
+  },
+  {
+    href: '/dashboard/assets',
+    label: 'Assets',
+    icon: TrendingUp,
   },
 ];
 

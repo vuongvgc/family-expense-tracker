@@ -28,6 +28,17 @@ enum DebtStatus {
     PAID
 }
 
+// Enum for asset types
+enum AssetType {
+    CASH
+    BANK
+    INVESTMENT
+    REAL_ESTATE
+    CRYPTO
+    GOLD
+    OTHER
+}
+
 // FamilyGroup Model
 // Represents a household/family unit that shares expense tracking
 model FamilyGroup {
@@ -42,6 +53,7 @@ model FamilyGroup {
     categories   Category[]    @relation("FamilyCategories")
     budgets      Budget[]      @relation("FamilyBudgets")
     debts        Debt[]        @relation("FamilyDebts")
+    assets       Asset[]       @relation("FamilyAssets")
 
     @@index([inviteCode])
 }
@@ -168,4 +180,21 @@ model DebtPayment {
 
     @@index([debtId])
     @@index([date])
+}
+
+// Asset Model
+// Tracks wealth and assets owned by the family group
+model Asset {
+    id        String    @id @default(cuid())
+    name      String
+    amount    Decimal   @db.Decimal(15, 0)
+    type      AssetType
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+
+    familyGroupId String
+    familyGroup   FamilyGroup @relation("FamilyAssets", fields: [familyGroupId], references: [id], onDelete: Cascade)
+
+    @@index([familyGroupId])
+    @@index([type])
 }
