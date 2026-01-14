@@ -18,6 +18,7 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import EstimationManager from './estimation-manager';
 import LixiList from './lixi-list';
+import { EventType } from '@prisma/client';
 
 interface TetStatistics {
   totalEstimated: number;
@@ -35,7 +36,7 @@ interface TetStatistics {
 interface EventDetails {
   id: string;
   name: string;
-  type: string;
+  type: EventType;
   budget: number;
   eventEstimations: Array<{
     id: string;
@@ -308,6 +309,7 @@ Chi tiết:
           {/* Estimation Manager */}
           <EstimationManager
             eventId={eventId}
+            eventType={event.type}
             estimations={event.eventEstimations || []}
             onUpdate={refreshData}
           />

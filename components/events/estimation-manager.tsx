@@ -1,14 +1,22 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { MoneyInput } from '@/components/ui/money-input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Plus, Trash2, Edit2, X, Check } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { EventType } from '@prisma/client';
 
 interface EventEstimation {
   id: string;
@@ -16,14 +24,22 @@ interface EventEstimation {
   estimatedAmount: number;
 }
 
+interface Category {
+  id: string;
+  name: string;
+  icon: string;
+}
+
 interface EstimationManagerProps {
   eventId: string;
+  eventType: EventType;
   estimations: EventEstimation[];
   onUpdate: () => void;
 }
 
 export default function EstimationManager({
   eventId,
+  eventType,
   estimations: initialEstimations,
   onUpdate,
 }: EstimationManagerProps) {
@@ -31,6 +47,8 @@ export default function EstimationManager({
     useState<EventEstimation[]>(initialEstimations);
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loadingCategories, setLoadingCategories] = useState(true);
   const { toast } = useToast();
 
   const [formData, setFormData] = useState({
@@ -38,11 +56,35 @@ export default function EstimationManager({
     estimatedAmount: 0,
   });
 
+  // Fetch categories for this event type
+  useEffect(() => {
+    const fetchCategories = async () => {
+      setLoadingCategories(true);
+      try {
+        const response = await fetch(
+          `/api/categories?type=EXPENSE&eventType=${eventType}`
+        );
+        const data = await response.json();
+        setCategories(data.categories || []);
+      } catch (error) {
+        console.error('Failed to fetch categories:', error);
+      } finally {
+        setLoadingCategories(false);
+      }
+    };
+
+    fetchCategories();
+  }, [eventType]);
+
   const handleAdd = async () => {
-    if (!formData.itemName || formData.estimatedAmount <= 0) {
+    if (
+      !formData.itemName ||
+      formData.itemName === 'custom' ||
+      formData.estimatedAmount <= 0
+    ) {
       toast({
         title: 'Lỗi',
-        description: 'Vui lòng nhập đầy đủ thông tin',
+        description: 'Vui lòng chọn danh mục và nhập số tiền',
         variant: 'destructive',
       });
       return;
@@ -147,14 +189,38 @@ export default function EstimationManager({
             className='p-4 bg-orange-50 rounded-lg space-y-3 border border-orange-200'
           >
             <div className='space-y-2'>
-              <Label>Tên Khoản Chi</Label>
-              <Input
-                placeholder='Ví dụ: Mua giò chả, Lì xì anh Hai'
-                value={formData.itemName}
-                onChange={(e) =>
-                  setFormData({ ...formData, itemName: e.target.value })
-                }
-              />
+              <Label>Danh Mục Chi Tiêu</Label>
+              {loadingCategories ? (
+                <Input disabled placeholder='Đang tải danh mục...' />
+              ) : (
+                <Select
+                  value={formData.itemName}
+                  onValueChange={(value) =>
+                    setFormData({ ...formData, itemName: value })
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder='Chọn danh mục' />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categories.map((cat) => (
+                      <SelectItem key={cat.id} value={cat.name}>
+                        {cat.icon} {cat.name}
+                      </SelectItem>
+                    ))}
+                    <SelectItem value='custom'>✏️ Nhập tên khác...</SelectItem>
+                  </SelectContent>
+                </Select>
+              )}
+              {formData.itemName === 'custom' && (
+                <Input
+                  placeholder='Nhập tên khoản chi'
+                  onChange={(e) =>
+                    setFormData({ ...formData, itemName: e.target.value })
+                  }
+                  className='mt-2'
+                />
+              )}
             </div>
             <div className='space-y-2'>
               <Label>Số Tiền Dự Kiến (VND)</Label>

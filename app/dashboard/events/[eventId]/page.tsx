@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation';
 import { auth } from '@/auth';
 import { getEvent, getTetStatistics } from '@/actions/event';
-import TetDashboardClient from '@/components/events/tet-dashboard-client';
+import EventDashboardClient from '@/components/events/event-dashboard-client';
 
 export default async function TetEventPage({
   params,
@@ -20,7 +20,7 @@ export default async function TetEventPage({
     const stats = await getTetStatistics(eventId);
 
     return (
-      <TetDashboardClient
+      <EventDashboardClient
         eventId={eventId}
         initialEvent={{
           id: event.id,
