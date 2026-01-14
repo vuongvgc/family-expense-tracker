@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@/auth';
 import prisma from '@/lib/prisma';
-import { TransactionType } from '@prisma/client';
+import { TransactionType, EventType } from '@prisma/client';
 
 // GET /api/categories - Fetch categories for the user's family
 export async function GET(request: Request) {
@@ -14,6 +14,7 @@ export async function GET(request: Request) {
 
     const { searchParams } = new URL(request.url);
     const type = searchParams.get('type') as TransactionType | null;
+    const eventTypeParam = searchParams.get('eventType');
 
     const where: any = {
       familyGroupId: session.user.familyGroupId,
@@ -23,6 +24,16 @@ export async function GET(request: Request) {
       where.type = type;
     }
 
+    // Handle eventType filtering
+    if (eventTypeParam === 'null') {
+      // Only show general categories (eventType = null)
+      where.eventType = null;
+    } else if (eventTypeParam) {
+      // Show ONLY categories for specific event type (not including general categories)
+      where.eventType = eventTypeParam as EventType;
+    }
+    // If no eventTypeParam, show all categories (default behavior)
+
     const categories = await prisma.category.findMany({
       where,
       orderBy: { name: 'asc' },
@@ -31,6 +42,7 @@ export async function GET(request: Request) {
         name: true,
         icon: true,
         type: true,
+        eventType: true,
       },
     });
 

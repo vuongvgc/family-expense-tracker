@@ -5,6 +5,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
   Card,
   CardContent,
   CardDescription,
@@ -35,7 +42,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { createCategory, updateCategory, deleteCategory } from '@/actions/category';
 import { Plus, Pencil, Trash2, Loader2 } from 'lucide-react';
-import { TransactionType } from '@prisma/client';
+import { TransactionType, EventType } from '@prisma/client';
 import { AnimatedCard } from '@/components/ui/animated-card';
 
 interface Category {
@@ -43,6 +50,7 @@ interface Category {
   name: string;
   type: TransactionType;
   icon: string;
+  eventType?: EventType | null;
   _count: {
     transactions: number;
   };
@@ -150,7 +158,20 @@ export default function CategoriesPageClient({
               <div className='flex items-center gap-3 flex-1'>
                 <div className='text-4xl'>{category.icon}</div>
                 <div className='flex-1 min-w-0'>
-                  <h3 className='font-semibold text-lg truncate'>{category.name}</h3>
+                  <div className='flex items-center gap-2'>
+                    <h3 className='font-semibold text-lg truncate'>
+                      {category.name}
+                    </h3>
+                    {category.eventType && (
+                      <span className='text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full'>
+                        {category.eventType === 'TET'
+                          ? '🧧 Tết'
+                          : category.eventType === 'TRAVEL'
+                          ? '✈️ Du lịch'
+                          : '📅 Khác'}
+                      </span>
+                    )}
+                  </div>
                   <p className='text-sm text-muted-foreground'>
                     {category._count.transactions} giao dịch
                   </p>
@@ -260,6 +281,25 @@ export default function CategoriesPageClient({
         />
         <p className='text-xs text-muted-foreground'>
           Nhập ký tự emoji (ví dụ: 🍔, 💰, 🚗)
+        </p>
+      </div>
+
+      <div className='space-y-2'>
+        <Label htmlFor='eventType'>Loại Sự Kiện (Tùy Chọn)</Label>
+        <Select name='eventType' defaultValue={category?.eventType || 'none'}>
+          <SelectTrigger>
+            <SelectValue placeholder='Chọn loại sự kiện' />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value='none'>Không (Danh mục chung)</SelectItem>
+            <SelectItem value='TET'>🧧 Tết</SelectItem>
+            <SelectItem value='TRAVEL'>✈️ Du lịch</SelectItem>
+            <SelectItem value='OTHER'>📅 Khác</SelectItem>
+          </SelectContent>
+        </Select>
+        <p className='text-xs text-muted-foreground'>
+          Liên kết danh mục này với loại sự kiện cụ thể. Để trống nếu là danh mục
+          chung.
         </p>
       </div>
 

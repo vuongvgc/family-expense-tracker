@@ -31,6 +31,12 @@ interface CategoryOption {
   type: TransactionType;
 }
 
+interface EventOption {
+  id: string;
+  name: string;
+  type: string;
+}
+
 interface Transaction {
   id: string;
   amount: number;
@@ -38,11 +44,16 @@ interface Transaction {
   type: TransactionType;
   paymentMethod: PaymentMethod;
   categoryId: string | null;
+  eventId?: string | null;
   date: string;
   category?: {
     id: string;
     name: string;
     icon: string;
+  };
+  event?: {
+    id: string;
+    name: string;
   };
 }
 
@@ -65,6 +76,8 @@ export default function TransactionForm({
   const [loadingCategories, setLoadingCategories] = useState(true);
   const [suggestionsMap, setSuggestionsMap] = useState<Record<string, string[]>>({});
   const [loadingSuggestions, setLoadingSuggestions] = useState(true);
+  const [events, setEvents] = useState<EventOption[]>([]);
+  const [loadingEvents, setLoadingEvents] = useState(true);
 
   const [formData, setFormData] = useState({
     amount: transaction?.amount ? Number(transaction.amount) : 0,
@@ -72,6 +85,7 @@ export default function TransactionForm({
     type: (transaction?.type || 'EXPENSE') as TransactionType,
     paymentMethod: (transaction?.paymentMethod || 'CASH') as PaymentMethod,
     categoryId: transaction?.categoryId || '',
+    eventId: transaction?.eventId || 'none',
     date: transaction?.date
       ? new Date(transaction.date).toISOString().slice(0, 16)
       : new Date().toISOString().slice(0, 16),
@@ -94,18 +108,64 @@ export default function TransactionForm({
     fetchSuggestions();
   }, []);
 
+  // Fetch events when component mounts
+  useEffect(() => {
+    const fetchEvents = async () => {
+      setLoadingEvents(true);
+      try {
+        const response = await fetch('/api/events');
+        const data = await response.json();
+        setEvents(data.events || []);
+      } catch (error) {
+        console.error('Failed to fetch events:', error);
+      } finally {
+        setLoadingEvents(false);
+      }
+    };
+
+    fetchEvents();
+  }, []);
+
   // Fetch categories when component mounts or type changes
   useEffect(() => {
     const fetchCategories = async () => {
       setLoadingCategories(true);
       try {
-        const response = await fetch(`/api/categories?type=${formData.type}`);
+        // Build URL with type and eventType parameters
+        let url = `/api/categories?type=${formData.type}`;
+
+        // If an event is selected, get its type and filter categories
+        if (formData.eventId && formData.eventId !== 'none') {
+          const selectedEvent = events.find((e) => e.id === formData.eventId);
+          console.log('🔍 Debug filter:', {
+            eventId: formData.eventId,
+            selectedEvent,
+            eventType: selectedEvent?.type,
+            eventsLoaded: events.length,
+          });
+          if (selectedEvent?.type) {
+            url += `&eventType=${selectedEvent.type}`;
+          }
+        } else if (formData.eventId === 'none') {
+          // When "no event" is selected, only show general categories (eventType = null)
+          url += `&eventType=null`;
+        }
+
+        console.log('📡 Fetching categories with URL:', url);
+        const response = await fetch(url);
         const data = await response.json();
-        setCategories(data.categories || []);
+        const fetchedCategories = data.categories || [];
+        console.log(
+          '✅ Categories loaded:',
+          fetchedCategories.length,
+          fetchedCategories
+        );
+
+        setCategories(fetchedCategories);
 
         // If no category selected and categories available, select first one
-        if (!formData.categoryId && data.categories?.length > 0) {
-          setFormData((prev) => ({ ...prev, categoryId: data.categories[0].id }));
+        if (!formData.categoryId && fetchedCategories.length > 0) {
+          setFormData((prev) => ({ ...prev, categoryId: fetchedCategories[0].id }));
         }
       } catch (error) {
         console.error('Failed to fetch categories:', error);
@@ -115,7 +175,7 @@ export default function TransactionForm({
     };
 
     fetchCategories();
-  }, [formData.type]);
+  }, [formData.type, formData.eventId, events]);
 
   useEffect(() => {
     if (transaction) {
@@ -125,6 +185,7 @@ export default function TransactionForm({
         type: transaction.type,
         paymentMethod: transaction.paymentMethod || 'CASH',
         categoryId: transaction.categoryId || '',
+        eventId: transaction.eventId || '',
         date: new Date(transaction.date).toISOString().slice(0, 16),
       });
     }
@@ -142,6 +203,8 @@ export default function TransactionForm({
         type: formData.type as TransactionType,
         paymentMethod: formData.paymentMethod as PaymentMethod,
         categoryId: formData.categoryId || null,
+        eventId:
+          formData.eventId && formData.eventId !== 'none' ? formData.eventId : null,
         date: new Date(formData.date).toISOString(),
       };
 
@@ -271,6 +334,51 @@ export default function TransactionForm({
             )}
           </SelectContent>
         </Select>
+      </div>
+
+      <div className='space-y-2'>
+        <Label htmlFor='event'>Sự Kiện (Tùy Chọn)</Label>
+        <Select
+          value={formData.eventId}
+          onValueChange={(value) => setFormData({ ...formData, eventId: value })}
+          disabled={isLoading || loadingEvents}
+        >
+          <SelectTrigger>
+            <SelectValue
+              placeholder={loadingEvents ? 'Đang tải sự kiện...' : 'Chọn sự kiện'}
+            />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value='none'>Không có sự kiện</SelectItem>
+            {loadingEvents ? (
+              <SelectItem value='loading' disabled>
+                Đang tải sự kiện...
+              </SelectItem>
+            ) : events.length === 0 ? (
+              <SelectItem value='empty' disabled>
+                Chưa có sự kiện nào
+              </SelectItem>
+            ) : (
+              events.map((event) => (
+                <SelectItem key={event.id} value={event.id}>
+                  {event.type === 'TET'
+                    ? '🧧'
+                    : event.type === 'TRAVEL'
+                    ? '✈️'
+                    : '📅'}{' '}
+                  {event.name}
+                </SelectItem>
+              ))
+            )}
+          </SelectContent>
+        </Select>
+        {formData.eventId &&
+          formData.eventId !== 'none' &&
+          events.find((e) => e.id === formData.eventId) && (
+            <p className='text-xs text-muted-foreground'>
+              💡 Danh mục sẽ được lọc theo sự kiện đã chọn
+            </p>
+          )}
       </div>
 
       <div className='space-y-2'>

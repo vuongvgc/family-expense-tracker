@@ -3,7 +3,7 @@
 import { auth } from '@/auth';
 import prisma from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
-import { TransactionType } from '@prisma/client';
+import { TransactionType, EventType } from '@prisma/client';
 import { z } from 'zod';
 
 // Validation schemas
@@ -11,6 +11,7 @@ const categorySchema = z.object({
   name: z.string().min(1, 'Name is required').max(50, 'Name is too long'),
   type: z.nativeEnum(TransactionType),
   icon: z.string().min(1, 'Icon is required').max(10, 'Icon is too long'),
+  eventType: z.nativeEnum(EventType).nullable().optional(),
 });
 
 /**
@@ -66,6 +67,11 @@ export async function createCategory(formData: FormData) {
       name: formData.get('name') as string,
       type: formData.get('type') as TransactionType,
       icon: formData.get('icon') as string,
+      eventType: (() => {
+        const value = formData.get('eventType') as string;
+        if (!value || value === 'none') return null;
+        return value as EventType;
+      })(),
     };
 
     // Validate input
@@ -122,6 +128,11 @@ export async function updateCategory(categoryId: string, formData: FormData) {
       name: formData.get('name') as string,
       type: formData.get('type') as TransactionType,
       icon: formData.get('icon') as string,
+      eventType: (() => {
+        const value = formData.get('eventType') as string;
+        if (!value || value === 'none') return null;
+        return value as EventType;
+      })(),
     };
 
     // Validate input

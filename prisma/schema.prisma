@@ -49,6 +49,13 @@ enum AssetType {
     OTHER
 }
 
+// Enum for event types
+enum EventType {
+    TET // Tết/Lunar New Year
+    TRAVEL
+    OTHER
+}
+
 // FamilyGroup Model
 // Represents a household/family unit that shares expense tracking
 model FamilyGroup {
@@ -64,6 +71,7 @@ model FamilyGroup {
     budgets      Budget[]      @relation("FamilyBudgets")
     debts        Debt[]        @relation("FamilyDebts")
     assets       Asset[]       @relation("FamilyAssets")
+    events       Event[]       @relation("FamilyEvents")
 
     @@index([inviteCode])
 }
@@ -95,6 +103,7 @@ model Category {
     name      String
     type      TransactionType
     icon      String
+    eventType EventType? // Optional: Link category to specific event type (TET, TRAVEL, etc.)
     createdAt DateTime        @default(now())
     updatedAt DateTime        @updatedAt
 
@@ -106,6 +115,7 @@ model Category {
 
     @@index([familyGroupId])
     @@index([type])
+    @@index([eventType])
 }
 
 // Transaction Model
@@ -128,10 +138,14 @@ model Transaction {
     createdById String
     createdBy   User   @relation("UserTransactions", fields: [createdById], references: [id], onDelete: Cascade)
 
+    eventId String?
+    event   Event?  @relation("EventTransactions", fields: [eventId], references: [id], onDelete: SetNull)
+
     @@index([familyGroupId, date])
     @@index([createdById])
     @@index([type])
     @@index([categoryId])
+    @@index([eventId])
 }
 
 // Budget Model
@@ -208,4 +222,41 @@ model Asset {
 
     @@index([familyGroupId])
     @@index([type])
+}
+
+// Event Model
+// Represents special events like Tết, Travel, etc.
+model Event {
+    id        String    @id @default(cuid())
+    name      String
+    budget    Decimal   @db.Decimal(15, 0) // Total budget for the event
+    type      EventType
+    startDate DateTime?
+    endDate   DateTime?
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+
+    familyGroupId String
+    familyGroup   FamilyGroup @relation("FamilyEvents", fields: [familyGroupId], references: [id], onDelete: Cascade)
+
+    transactions     Transaction[]     @relation("EventTransactions")
+    eventEstimations EventEstimation[] @relation("EventEstimations")
+
+    @@index([familyGroupId])
+    @@index([type])
+}
+
+// EventEstimation Model
+// Represents budget estimations/planning items for an event
+model EventEstimation {
+    id              String   @id @default(cuid())
+    itemName        String // e.g., "Mua giò chả", "Lì xì anh Hai"
+    estimatedAmount Decimal  @db.Decimal(15, 0)
+    createdAt       DateTime @default(now())
+    updatedAt       DateTime @updatedAt
+
+    eventId String
+    event   Event  @relation("EventEstimations", fields: [eventId], references: [id], onDelete: Cascade)
+
+    @@index([eventId])
 }

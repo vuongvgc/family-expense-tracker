@@ -10,6 +10,7 @@ const transactionSchema = z.object({
   type: z.nativeEnum(TransactionType),
   paymentMethod: z.nativeEnum(PaymentMethod).default(PaymentMethod.CASH),
   categoryId: z.string().optional().nullable(),
+  eventId: z.string().optional().nullable(),
   date: z.string().datetime().optional(),
 });
 
@@ -101,6 +102,7 @@ export async function PUT(
         type: validatedData.type,
         paymentMethod: validatedData.paymentMethod,
         categoryId: validatedData.categoryId,
+        eventId: validatedData.eventId,
         date: validatedData.date ? new Date(validatedData.date) : undefined,
       },
       include: {

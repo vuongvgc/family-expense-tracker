@@ -32,6 +32,7 @@ import {
   Users,
   TrendingUp,
   List,
+  Calendar,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -75,6 +76,11 @@ const mainNavItems = [
     href: '/dashboard/assets',
     label: 'Tài Sản',
     icon: TrendingUp,
+  },
+  {
+    href: '/dashboard/events',
+    label: 'Sự Kiện',
+    icon: Calendar,
   },
 ];
 
